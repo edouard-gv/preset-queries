@@ -1,0 +1,9 @@
+<div>Results</div>
+<table>
+  <tr>
+    <td *ngFor='let header of queryService.headerSource'>{{header}}</td>
+  </tr>
+  <tr *ngFor='let line of queryService.dataSource'>
+    <td *ngFor='let data of line'>{{data}}</td>
+  </tr>
+</table>

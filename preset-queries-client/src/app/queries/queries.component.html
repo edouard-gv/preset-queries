@@ -1,0 +1,11 @@
+<div>Choose a query</div>
+<ul class="heroes">
+  <li *ngFor="let query of queries"
+      [class.selected]="query === selectedQuery"
+      (click)="onSelect(query)">
+
+    <span class="name">{{query.name}}</span>
+  </li>
+</ul>
+
+<app-query-detail [query]="selectedQuery"></app-query-detail>
