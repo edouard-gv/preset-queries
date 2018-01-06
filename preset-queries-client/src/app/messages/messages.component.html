@@ -1,6 +1,6 @@
 <div *ngIf="messageService.messages.length">
   <hr>
-  <div *ngFor='let message of messageService.messages' class="small"> {{message}} </div>
+  <div *ngFor='let message of messageService.messages.reverse()' class="small"> {{message}} </div>
   <button class="clear small"
           (click)="messageService.clear()">clear</button>
 </div>
