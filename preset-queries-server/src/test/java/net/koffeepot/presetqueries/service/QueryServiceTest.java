@@ -1,4 +1,4 @@
-package com.koffeepot.presetqueries.service;
+package net.koffeepot.presetqueries.service;
 
 import org.junit.Test;
 

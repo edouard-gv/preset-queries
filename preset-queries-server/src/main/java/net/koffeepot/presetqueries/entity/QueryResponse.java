@@ -1,4 +1,4 @@
-package com.koffeepot.presetqueries.entity;
+package net.koffeepot.presetqueries.entity;
 
 import java.util.List;
 

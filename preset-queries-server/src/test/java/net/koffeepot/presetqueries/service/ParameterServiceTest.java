@@ -1,7 +1,7 @@
-package com.koffeepot.presetqueries.service;
+package net.koffeepot.presetqueries.service;
 
-import com.koffeepot.presetqueries.entity.Query;
-import com.koffeepot.presetqueries.repository.QueryRepository;
+import net.koffeepot.presetqueries.entity.Query;
+import net.koffeepot.presetqueries.repository.QueryRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

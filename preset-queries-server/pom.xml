@@ -76,6 +76,13 @@
 			<artifactId>h2</artifactId>
 		</dependency>
 
+		<!-- only for dev, but nothing to do, deactivated by default on production environment -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<optional>true</optional>
+		</dependency>
+
 
     </dependencies>
 
@@ -85,8 +92,25 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<phase>validate</phase>
+						<goals><goal>copy-resources</goal></goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/classes/static/</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${basedir}/../preset-queries-client/dist</directory>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
-
 
 </project>

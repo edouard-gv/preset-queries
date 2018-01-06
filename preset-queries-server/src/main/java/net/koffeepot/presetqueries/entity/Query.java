@@ -1,4 +1,4 @@
-package com.koffeepot.presetqueries.entity;
+package net.koffeepot.presetqueries.entity;
 
 import javax.persistence.*;
 import java.util.HashSet;

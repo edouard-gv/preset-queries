@@ -1,4 +1,4 @@
-package com.koffeepot.presetqueries.common;
+package net.koffeepot.presetqueries.common;
 
 public class TechnicalRuntimeException extends RuntimeException {
 

@@ -1,7 +1,7 @@
-package com.koffeepot.presetqueries;
+package net.koffeepot.presetqueries;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.koffeepot.presetqueries.entity.Query;
+import net.koffeepot.presetqueries.entity.Query;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;

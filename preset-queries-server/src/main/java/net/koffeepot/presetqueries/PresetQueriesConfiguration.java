@@ -1,4 +1,4 @@
-package com.koffeepot.presetqueries;
+package net.koffeepot.presetqueries;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,3 +10,4 @@ public class PresetQueriesConfiguration {
 		SpringApplication.run(PresetQueriesConfiguration.class, args);
 	}
 }
+

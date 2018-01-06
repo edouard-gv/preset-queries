@@ -1,10 +1,10 @@
-package com.koffeepot.presetqueries.service;
+package net.koffeepot.presetqueries.service;
 
-import com.koffeepot.presetqueries.common.TechnicalRuntimeException;
-import com.koffeepot.presetqueries.entity.Parameter;
-import com.koffeepot.presetqueries.entity.Query;
-import com.koffeepot.presetqueries.entity.QueryResponse;
-import com.koffeepot.presetqueries.repository.QueryRepository;
+import net.koffeepot.presetqueries.common.TechnicalRuntimeException;
+import net.koffeepot.presetqueries.entity.Parameter;
+import net.koffeepot.presetqueries.entity.Query;
+import net.koffeepot.presetqueries.entity.QueryResponse;
+import net.koffeepot.presetqueries.repository.QueryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -27,8 +27,8 @@ public class QueryServiceImpl implements QueryService {
         queries.add(new Query("Requête sans params", "Pour test"));
 
         queries.get(0).getParameters().add(new Parameter("param1", "String"));
-        queries.get(0).getParameters().add(new Parameter("param2", "Int"));
-        queries.get(1).getParameters().add(new Parameter("param3", "String"));
+        queries.get(0).getParameters().add(new Parameter("param3", "Int"));
+        queries.get(1).getParameters().add(new Parameter("param6", "String"));
 
         return queries;
     }

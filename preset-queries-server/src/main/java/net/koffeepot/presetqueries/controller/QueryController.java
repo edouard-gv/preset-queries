@@ -1,9 +1,9 @@
-package com.koffeepot.presetqueries.controller;
+package net.koffeepot.presetqueries.controller;
 
-import com.koffeepot.presetqueries.entity.Query;
-import com.koffeepot.presetqueries.entity.QueryResponse;
-import com.koffeepot.presetqueries.repository.QueryRepository;
-import com.koffeepot.presetqueries.service.QueryService;
+import net.koffeepot.presetqueries.entity.Query;
+import net.koffeepot.presetqueries.entity.QueryResponse;
+import net.koffeepot.presetqueries.repository.QueryRepository;
+import net.koffeepot.presetqueries.service.QueryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,7 @@
-package com.koffeepot.presetqueries.repository;
+package net.koffeepot.presetqueries.repository;
 
-import com.koffeepot.presetqueries.common.TechnicalRuntimeException;
-import com.koffeepot.presetqueries.entity.Query;
+import net.koffeepot.presetqueries.common.TechnicalRuntimeException;
+import net.koffeepot.presetqueries.entity.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
