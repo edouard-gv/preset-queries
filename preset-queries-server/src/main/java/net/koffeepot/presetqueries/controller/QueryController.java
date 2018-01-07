@@ -31,12 +31,6 @@ public class QueryController {
 
     @RequestMapping(path = "/api/query", method= RequestMethod.POST)
     public ResponseEntity<QueryResponse> auth(@RequestBody Query query) {
-        try {
-            return new ResponseEntity<>(queryService.postQuery(query), HttpStatus.OK);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<QueryResponse>(new QueryResponse(query, e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        return new ResponseEntity<>(queryService.postQuery(query), HttpStatus.OK);
     }
 }

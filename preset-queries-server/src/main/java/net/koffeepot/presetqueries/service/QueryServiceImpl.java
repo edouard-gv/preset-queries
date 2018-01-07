@@ -55,7 +55,7 @@ public class QueryServiceImpl implements QueryService {
 
         try {
 
-            NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(DataSourceFactory.getFactory(storedQuery.getSource()).createDataSource());
+            NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(DataSourceFactory.getDataSource(storedQuery.getSource()));
 
             MapSqlParameterSource paramSource = new MapSqlParameterSource();
             //TODO: should be in the convert Template method to be nearby the similar logic
@@ -84,6 +84,7 @@ public class QueryServiceImpl implements QueryService {
         catch (SQLException ex) {
             throw new TechnicalRuntimeException(ex);
         }
+
     }
 
     String mergeTemplate(String template, Set<Parameter> parameters) {
