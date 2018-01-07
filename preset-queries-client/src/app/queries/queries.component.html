@@ -1,5 +1,5 @@
-<div>Choose a query</div>
-<ul class="heroes">
+<strong>Pick a query</strong>
+<ul>
   <li *ngFor="let query of queries"
       [class.selected]="query === selectedQuery"
       (click)="onSelect(query)">

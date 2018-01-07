@@ -1,9 +1,13 @@
-<div>Results</div>
-<table>
-  <tr>
-    <td *ngFor='let header of queryService.headerSource'>{{header}}</td>
-  </tr>
-  <tr *ngFor='let line of queryService.dataSource'>
-    <td *ngFor='let data of line'>{{data}}</td>
-  </tr>
-</table>
+<div class="main">
+  <table class="data table-bordered">
+    <tr class="border border-left-0 border-top-0 border-right-0" >
+      <td *ngFor='let header of queryService.headerSource'>{{header}}</td>
+    </tr>
+    <tr *ngIf="!queryService.dataSource.length"><span class="text-muted">no data</span></tr>
+    <tr *ngFor='let line of queryService.dataSource'>
+      <td *ngFor='let data of line'>{{data}}</td>
+    </tr>
+  </table>
+  &nbsp;
+</div>
+

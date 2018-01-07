@@ -17,7 +17,7 @@ const httpOptions = {
 export class QueryService {
 
   headerSource: string[] = ['--'];
-  dataSource: string[][] = [['no data']];
+  dataSource: string[][] = [];
 
   getQueries(): Observable<Query[]> {
     return this.http.get<Query[]>('api/queries')
@@ -28,14 +28,15 @@ export class QueryService {
   }
 
   postQuery (query: Query): void {
-    const response: Observable<QueryResponse> = this.http.post<QueryResponse>('api/query', query, httpOptions).pipe(
-      tap((queryResponse: QueryResponse) => this.log(`query ${query.name} posted with result ${queryResponse.data}`)),
+    this.messageService.setMainMessage(null);
+    this.http.post<QueryResponse>('api/query', query, httpOptions).pipe(
+      tap((queryResponse: QueryResponse) => this.log(`query ${query.name} posted, returned jdbcTemplate ${queryResponse.jdbcTemplate}`)),
       catchError(this.handleError<QueryResponse>('postQuery'))
-    );
-
-    response.subscribe((queryResponse: QueryResponse) => {
-      this.dataSource = queryResponse.data;
-      this.headerSource = queryResponse.header;
+    ).subscribe((queryResponse: QueryResponse) => {
+      if (queryResponse) {
+        this.dataSource = queryResponse.data;
+        this.headerSource = queryResponse.header;
+      }
     });
   }
 
@@ -55,15 +56,18 @@ export class QueryService {
       console.error(error); // log to console instead
 
       // TODO: better job of transforming error for user consumption
-      this.log(`${operation} failed: ${error.message}`);
+      this.log(`${operation} failed: ${error.error.message} (${error.error.status}-${error.error.error})`, true);
 
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };
   }
 
-  private log(message: string) {
+  private log(message: string, isError?: boolean) {
     this.messageService.add('QueryService: ' + message);
+    if (isError) {
+      this.messageService.setMainMessage(message);
+    }
   }
 
 }

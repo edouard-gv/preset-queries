@@ -15,5 +15,6 @@ export class QueryResponse {
   message: string;
   header: string[];
   data: string[][];
+  jdbcTemplate: string;
 }
 

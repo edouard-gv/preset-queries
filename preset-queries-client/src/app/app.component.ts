@@ -8,5 +8,5 @@ import {MessageService} from './message.service';
 })
 export class AppComponent {
   title = 'Preset Queries';
-  constructor(public messageService: MessageService) { }
+  constructor() { }
 }

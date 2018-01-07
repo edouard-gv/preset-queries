@@ -1,15 +1,20 @@
 <div *ngIf="query">
-  <div>Query seleced: {{ query.name }} ({{ query.description}})</div>
+  <strong>Query picked: {{ query.name }}</strong>
+  <div class="text-muted">{{ query.description}}</div>
   <div *ngIf="query.parameters.length">
-    <div>Enter parameters:</div>
-    <ul class="parameters">
-      <li *ngFor="let parameter of query.parameters">
-        <span class="name">{{parameter.label}}</span><input [(ngModel)]="parameter.userValue" placeholder="userValue">
-      </li>
-    </ul>
+    <strong>Enter parameters:</strong>
+    <div>
+      <div class="form-group row" *ngFor="let parameter of query.parameters">
+        <label class="col-sm-2 col-form-label col-form-label-sm">{{parameter.name}}</label>
+        <div class="col-sm-10">
+          <input [(ngModel)]="parameter.userValue" class="form-control form-control-sm" placeholder="{{parameter.name}}">
+        </div>
+      </div>
+    </div>
   </div>
-  <button (click)="post()">post</button>
+  <button (click)="post()" class="btn btn-danger btn-sm">post</button>
  <!--   <code>
       <pre>{{query |json}}</pre>
     </code> -->
 </div>
+

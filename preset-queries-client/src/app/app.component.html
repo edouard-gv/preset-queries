@@ -1,26 +1,11 @@
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-  <a class="navbar-brand" href="#">{{ title }}</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-    <ul class="navbar-nav mr-auto">
-      <li class="nav-item"  *ngIf="messageService.messages.length">
-        <a class="nav-link disabled" href="#" >{{messageService.messages[messageService.messages.length - 1]}}</a>
-      </li>
-    </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
-  </div>
-</nav>
-
-<div class="container-fluid theme-showcase" role="main">
+<app-header [title]="title"></app-header>
+<div class="container" role="main">
+<!--  <div class="row">
+    <app-header [title]="title"></app-header>
+  </div> -->
   <div class="row">
-    <div class="col-xs-12 col-md-6"><app-queries></app-queries></div>
-    <div class="col-xs-12 col-md-6"><app-data-table></app-data-table></div>
+    <div class="col-xs-12 col-md-3"><app-queries></app-queries></div>
+    <div class="col-xs-12 col-md-9"><app-data-table></app-data-table></div>
   </div>
   <div class="row">
     <div class="col-md-12"><app-messages></app-messages></div>

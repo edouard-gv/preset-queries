@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
 
 import { AppComponent } from './app.component';
@@ -12,6 +13,7 @@ import { QueryService} from './query.service';
 import { MessagesComponent } from './messages/messages.component';
 import { MessageService } from './message.service';
 import { DataTableComponent } from './data-table/data-table.component';
+import { HeaderComponent } from './header/header.component';
 
 
 @NgModule({
@@ -20,7 +22,8 @@ import { DataTableComponent } from './data-table/data-table.component';
     QueriesComponent,
     QueryDetailComponent,
     MessagesComponent,
-    DataTableComponent
+    DataTableComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,

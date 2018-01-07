@@ -1,0 +1,18 @@
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="#">{{ title }}</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item"  *ngIf="messageService.mainMessage">
+        <a class="nav-link disabled" href="#" >{{messageService.mainMessage}}</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+<!--
+<a class="btn btn-light" href="#">{{ title }}</a>
+<span class="disabled mainmessage" *ngIf="messageService.mainMessage" href="#" >{{messageService.mainMessage}}</span>
+-->
