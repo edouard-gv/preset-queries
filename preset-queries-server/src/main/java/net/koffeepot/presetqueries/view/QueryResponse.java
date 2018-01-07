@@ -1,4 +1,6 @@
-package net.koffeepot.presetqueries.entity;
+package net.koffeepot.presetqueries.view;
+
+import net.koffeepot.presetqueries.entity.Query;
 
 import java.util.List;
 
@@ -31,10 +33,17 @@ public class QueryResponse {
 
     private Query query;
 
-    public QueryResponse(Query query, List<String> header, List<List<String>> data) {
+    public String getJdbcTemplate() {
+        return jdbcTemplate;
+    }
+
+    private String jdbcTemplate;
+
+    public QueryResponse(Query query, List<String> header, List<List<String>> data, String jdbcTemplate) {
         this.query = query;
         this.header = header;
         this.data = data;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public QueryResponse(Query query, String message) {

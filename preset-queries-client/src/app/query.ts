@@ -1,11 +1,10 @@
 class Parameter {
-  label: string;
+  name: string;
   type: string;
   userValue: string;
 }
 
 export class Query {
-  id: number;
   name: string;
   description: string;
   parameters: Parameter[];

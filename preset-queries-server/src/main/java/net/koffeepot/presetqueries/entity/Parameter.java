@@ -1,9 +1,8 @@
 package net.koffeepot.presetqueries.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+import javax.persistence.*;
 
 @Entity
 public class Parameter {
@@ -11,23 +10,50 @@ public class Parameter {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
-
-    private String label;
+    private String name;
     private String type;
+    @JsonInclude()
+    @Transient
+    private String userValue;
+    private String optionalFragment;
 
     protected Parameter() {}
 
-    public Parameter(String label, String type) {
+    //Constructors are only for tests
+    public Parameter(String name, String type, String optionalFragment) {
         this.type = type;
-        this.label = label;
+        this.name = name;
+        this.optionalFragment = optionalFragment;
     }
 
-    public String getLabel() {
-        return label;
+    public Parameter(String name, String type){
+        this(name, type, null);
+    }
+
+    public Parameter(String name){
+        this(name, null, null);
+    }
+
+    public String getUserValue() {
+        return userValue;
+    }
+
+    public void setUserValue(String userValue) {
+        this.userValue = userValue;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getType() {
         return type;
     }
+
+    public String getOptionalFragment() {
+        return optionalFragment;
+    }
+
+
 
 }

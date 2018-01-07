@@ -76,6 +76,11 @@
 			<artifactId>h2</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+		</dependency>
+
 		<!-- only for dev, but nothing to do, deactivated by default on production environment -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
