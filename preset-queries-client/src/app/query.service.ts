@@ -64,7 +64,7 @@ export class QueryService {
   }
 
   private log(message: string, isError?: boolean) {
-    this.messageService.add('QueryService: ' + message);
+    this.messageService.add('QueryService - ' + message);
     if (isError) {
       this.messageService.setMainMessage(message);
     }

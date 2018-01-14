@@ -6,7 +6,7 @@ export class MessageService {
   mainMessage: string;
 
   add(message: string) {
-    this.messages.push(message);
+    this.messages.push(new Date().toLocaleString() + " - " + message);
   }
 
   setMainMessage(message: string) {

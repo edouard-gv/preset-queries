@@ -1,3 +1,6 @@
 .selected {
   color: #AA1100;
 }
+ul {
+  list-style-type: square;
+}
