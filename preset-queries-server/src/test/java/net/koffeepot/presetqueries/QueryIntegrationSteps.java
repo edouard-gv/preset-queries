@@ -1,10 +1,13 @@
 package net.koffeepot.presetqueries;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import cucumber.api.PendingException;
+import cucumber.api.java.en.Given;
 import net.koffeepot.presetqueries.entity.Query;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import net.koffeepot.presetqueries.repository.QueryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -34,6 +37,10 @@ public class QueryIntegrationSteps {
     public void setUp(){
     }
 
+    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @Autowired
+    private QueryRepository queryRepository;
+
     @When("^I call \"([^\"]*)\"$")
     public void i_call_a_url(String url) throws Throwable {
         aResponse = restTemplate.getForEntity("/api/"+url, String.class);
@@ -57,5 +64,10 @@ public class QueryIntegrationSteps {
     throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(json, Query.class);
+    }
+
+    @Given("^I initiate a mock database with a query named \"([^\"]*)\"$")
+    public void iInitiateAMockDatabaseWithAQueryNamed(String name) throws Throwable {
+        queryRepository.save(new Query(name, "description", "source", "template"));
     }
 }

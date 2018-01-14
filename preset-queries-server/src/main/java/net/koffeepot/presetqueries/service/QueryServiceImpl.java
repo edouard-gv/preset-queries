@@ -1,9 +1,11 @@
 package net.koffeepot.presetqueries.service;
 
 import net.koffeepot.presetqueries.common.TechnicalRuntimeException;
+import net.koffeepot.presetqueries.entity.Configuration;
 import net.koffeepot.presetqueries.entity.Parameter;
 import net.koffeepot.presetqueries.entity.Query;
-import net.koffeepot.presetqueries.repository.DataSourceFactory;
+import net.koffeepot.presetqueries.datasource.DataSourceFactory;
+import net.koffeepot.presetqueries.repository.ConfigurationRepository;
 import net.koffeepot.presetqueries.repository.QueryRepository;
 import net.koffeepot.presetqueries.view.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,10 @@ public class QueryServiceImpl implements QueryService {
     @Autowired
     private
     QueryRepository queryRepository;
+
+    @Autowired
+    private
+    ConfigurationRepository configurationRepository;
 
     @Override
     public Iterable<Query> getQueries() {
@@ -43,7 +49,7 @@ public class QueryServiceImpl implements QueryService {
 
         }
 
-        //Storing temporary values given by the user in the query parameters so that if the user cannot force anything else
+        //Storing temporary values given by the user in the query parameters so that the user cannot force anything
         mergePostedParametersInStoredQuery(postedQuery.getParameters(), storedQuery.getParameters());
 
         if (!storedQuery.getTemplate().toUpperCase().startsWith("SELECT")) {
@@ -54,8 +60,13 @@ public class QueryServiceImpl implements QueryService {
         String jdbcTemplateString = mergeTemplate(storedQuery.getTemplate(), storedQuery.getParameters());
 
         try {
-
-            NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(DataSourceFactory.getDataSource(storedQuery.getSource()));
+            Configuration configuration = configurationRepository.findConfigurationByName(storedQuery.getSource());
+            if (configuration == null) {
+                throw new TechnicalRuntimeException("Configuration not found: "+storedQuery.getSource());
+            }
+            NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(
+                    DataSourceFactory.getDataSource(configuration)
+            );
 
             MapSqlParameterSource paramSource = new MapSqlParameterSource();
             //TODO: should be in the convert Template method to be nearby the similar logic

@@ -1,9 +1,12 @@
 package net.koffeepot.presetqueries.service;
 
 import net.koffeepot.presetqueries.common.TechnicalRuntimeException;
+import net.koffeepot.presetqueries.entity.Configuration;
 import net.koffeepot.presetqueries.entity.Query;
+import net.koffeepot.presetqueries.repository.ConfigurationRepository;
 import net.koffeepot.presetqueries.repository.QueryRepository;
 import net.koffeepot.presetqueries.view.QueryResponse;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,28 +31,40 @@ public class QueryServiceTest {
     @MockBean
     private QueryRepository queryRepository;
 
+    @MockBean
+    private ConfigurationRepository configurationRepository;
+
+    @Before
+    public void initH2Configuration() {
+        Configuration h2Configuration = new Configuration(
+                "h2",
+                "net.koffeepot.presetqueries.datasource.H2DataSourceFactory"
+        );
+        given(configurationRepository.findConfigurationByName("h2")).willReturn(h2Configuration);
+    }
+
     @Test
     public void postSimpleQuery() throws Exception {
-        Query storedQuery = new Query("simple", "desc", "mysql-local", "SELECT FOO FROM BAR");
+        Query storedQuery = new Query("simple", "desc", "h2", "SELECT * FROM QUERY");
         given(queryRepository.findQueryByName("simple")).willReturn(storedQuery);
         Query postedQuery = new Query("simple");
         QueryResponse response = queryService.postQuery(postedQuery);
-        assertThat(response.getJdbcTemplate()).isEqualTo("SELECT FOO FROM BAR");
+        assertThat(response.getJdbcTemplate()).isEqualTo("SELECT * FROM QUERY");
     }
 
     //Requête qui ne commence pas par un SELECT ou un sELecT ou ...
     @Test
     public void postStartingWithMixedCaseQuery() throws Exception {
-        Query storedQuery = new Query("simple", "", "mysql-local", "SeLECt FOO FROM BAR");
+        Query storedQuery = new Query("simple", "", "h2", "SeLECt * FROM QUERY");
         given(queryRepository.findQueryByName("simple")).willReturn(storedQuery);
         Query postedQuery = new Query("simple");
         QueryResponse response = queryService.postQuery(postedQuery);
-        assertThat(response.getJdbcTemplate()).isEqualTo("SeLECt FOO FROM BAR");
+        assertThat(response.getJdbcTemplate()).isEqualTo("SeLECt * FROM QUERY");
     }
 
     @Test
     public void postNotStartingWithSelectQuery() throws Exception {
-        Query storedQuery = new Query("simple", "", "mysql-local", "Update FOO FROM BAR");
+        Query storedQuery = new Query("simple", "", "h2", "Update FOO FROM BAR");
         given(queryRepository.findQueryByName("simple")).willReturn(storedQuery);
         Query postedQuery = new Query("simple");
         assertThatThrownBy(() -> queryService.postQuery(postedQuery))
@@ -66,5 +81,28 @@ public class QueryServiceTest {
                 .hasMessageContaining("Query not found: simple");
     }
 
+    @Test
+    public void postUnknownConfigurationQuery() throws Exception {
+        Query storedQuery = new Query("simple", "desc", "badconf", "SELECT * FROM QUERY");
+        given(queryRepository.findQueryByName("simple")).willReturn(storedQuery);
+        given(configurationRepository.findConfigurationByName("badconf")).willReturn(null);
 
+        Query postedQuery = new Query("simple");
+        assertThatThrownBy(() -> queryService.postQuery(postedQuery))
+                .isInstanceOf(TechnicalRuntimeException.class)
+                .hasMessageContaining("Configuration not found: badconf");
+    }
+
+    @Test
+    public void postNotADatasourceConfigurationQuery() throws Exception {
+        Query storedQuery = new Query("simple", "desc", "badimpl", "SELECT * FROM QUERY");
+        given(queryRepository.findQueryByName("simple")).willReturn(storedQuery);
+        Configuration badImpl = new Configuration("badimpl", "java.lang.Object");
+        given(configurationRepository.findConfigurationByName("badimpl")).willReturn(badImpl);
+
+        Query postedQuery = new Query("simple");
+        assertThatThrownBy(() -> queryService.postQuery(postedQuery))
+                .isInstanceOf(TechnicalRuntimeException.class)
+                .hasMessageContaining("Factory class must implement constructor with Configuration: java.lang.Object");
+    }
 }
