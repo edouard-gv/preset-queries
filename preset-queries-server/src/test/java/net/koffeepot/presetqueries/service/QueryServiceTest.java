@@ -38,7 +38,8 @@ public class QueryServiceTest {
     public void initH2Configuration() {
         Configuration h2Configuration = new Configuration(
                 "h2",
-                "net.koffeepot.presetqueries.datasource.H2DataSourceFactory"
+                "net.koffeepot.presetqueries.datasource.H2DataSourceFactory",
+                "{db_close_delay: 1}" //
         );
         given(configurationRepository.findConfigurationByName("h2")).willReturn(h2Configuration);
     }
@@ -97,7 +98,7 @@ public class QueryServiceTest {
     public void postNotADatasourceConfigurationQuery() throws Exception {
         Query storedQuery = new Query("simple", "desc", "badimpl", "SELECT * FROM QUERY");
         given(queryRepository.findQueryByName("simple")).willReturn(storedQuery);
-        Configuration badImpl = new Configuration("badimpl", "java.lang.Object");
+        Configuration badImpl = new Configuration("badimpl", "java.lang.Object", "");
         given(configurationRepository.findConfigurationByName("badimpl")).willReturn(badImpl);
 
         Query postedQuery = new Query("simple");

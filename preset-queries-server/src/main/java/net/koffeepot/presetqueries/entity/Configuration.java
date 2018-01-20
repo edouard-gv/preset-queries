@@ -1,6 +1,7 @@
 package net.koffeepot.presetqueries.entity;
 
 import javax.persistence.*;
+import java.util.Map;
 
 @Entity
 public class Configuration {
@@ -14,6 +15,11 @@ public class Configuration {
 
     String factoryClass;
 
+    @Transient
+    Map parametersMap;
+
+    String parameters;
+
     public String getName() {
         return name;
     }
@@ -23,8 +29,23 @@ public class Configuration {
     }
 
     //Constructors are for testing purpose only
-    public Configuration(String name, String factoryClass) {
+    public Configuration(String name, String factoryClass, String parameters) {
         this.name = name;
         this.factoryClass = factoryClass;
+        this.parameters = parameters;
+    }
+
+    /***
+     * Get a parameter from json in database. If parameter not found, throws a TRE!
+     * If parameter *not* mandatory, check before its existence with isParameterSet()
+     * @param key
+     * @return
+     */
+    public String getStringParameter(String key) {
+        return null;
+    }
+
+    public boolean isParameterSet() {
+        return false;
     }
 }
