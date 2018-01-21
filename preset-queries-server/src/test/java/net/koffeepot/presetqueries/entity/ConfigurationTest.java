@@ -15,11 +15,13 @@ public class ConfigurationTest {
     public void setUp() throws Exception {
         //
         h2Configuration = new Configuration(
+                new Long(1),
                 "h2",
                 "net.koffeepot.presetqueries.datasource.H2DataSourceFactory",
                 "{\"db_close_delay\": -1, \"db_close_delay_in_string\": \"-1\" }"
         );
         emptyConfiguration = new Configuration(
+                new Long(2),
                 "h2",
                 "net.koffeepot.presetqueries.datasource.H2DataSourceFactory",
                 null

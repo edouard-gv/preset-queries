@@ -1,6 +1,8 @@
 package net.koffeepot.presetqueries.controller;
 
+import net.koffeepot.presetqueries.entity.Configuration;
 import net.koffeepot.presetqueries.entity.Query;
+import net.koffeepot.presetqueries.repository.ConfigurationRepository;
 import net.koffeepot.presetqueries.view.QueryResponse;
 import net.koffeepot.presetqueries.repository.QueryRepository;
 import net.koffeepot.presetqueries.service.QueryService;
@@ -21,11 +23,14 @@ public class QueryController {
     @Autowired
     private QueryRepository queryRepository;
 
+    @Autowired
+    private ConfigurationRepository configurationRepository;
+
     @RequestMapping(path = "/api/queries", method= RequestMethod.GET)
     public @ResponseBody List<Query> getQueries() {
         //we iterate through the list at the last moment
         List<Query> queryList = new ArrayList<>();
-        queryService.getQueries().forEach(queryList::add);
+        queryRepository.findAll().forEach(queryList::add);
         return queryList;
     }
 
@@ -42,5 +47,13 @@ public class QueryController {
     @RequestMapping(path = "/api/query/{name}", method= RequestMethod.GET)
     public ResponseEntity<Query> get(@PathVariable("name") String name) {
         return new ResponseEntity<>(queryService.getQuery(name), HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/api/configurations", method= RequestMethod.GET)
+    public @ResponseBody List<Configuration> getConfigurations() {
+        //we iterate through the list at the last moment
+        List<Configuration> configurationList = new ArrayList<>();
+        configurationRepository.findAll().forEach(configurationList::add);
+        return configurationList;
     }
 }

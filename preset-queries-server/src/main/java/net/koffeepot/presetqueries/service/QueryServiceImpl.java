@@ -30,11 +30,6 @@ public class QueryServiceImpl implements QueryService {
     ConfigurationRepository configurationRepository;
 
     @Override
-    public Iterable<Query> getQueries() {
-        return queryRepository.findAll();
-    }
-
-    @Override
     public QueryResponse execQuery(Query postedQuery) {
         //Checks
         if (postedQuery == null || postedQuery.getId() == null) {
@@ -62,9 +57,9 @@ public class QueryServiceImpl implements QueryService {
         String jdbcTemplateString = mergeTemplate(storedQuery.getTemplate(), storedQuery.getParameters());
 
         try {
-            Configuration configuration = configurationRepository.findConfigurationByName(storedQuery.getSource());
+            Configuration configuration = storedQuery.getConfiguration();
             if (configuration == null) {
-                throw new TechnicalRuntimeException("Configuration not found: "+storedQuery.getSource());
+                throw new TechnicalRuntimeException("Query has no source configuration: "+storedQuery.getName());
             }
             NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(
                     DataSourceFactory.getDataSource(configuration)
@@ -114,7 +109,7 @@ public class QueryServiceImpl implements QueryService {
         }
 
         storedQuery.setDescription(postedQuery.getDescription());
-        storedQuery.setSource(postedQuery.getSource());
+        storedQuery.setConfiguration(configurationRepository.findOne(postedQuery.getConfigurationId()));
         storedQuery.setName(postedQuery.getName());
         storedQuery.setTemplate(postedQuery.getTemplate());
 

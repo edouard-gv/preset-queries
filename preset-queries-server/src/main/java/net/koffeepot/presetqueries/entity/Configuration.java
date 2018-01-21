@@ -1,5 +1,6 @@
 package net.koffeepot.presetqueries.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.koffeepot.presetqueries.common.TechnicalRuntimeException;
 
@@ -30,14 +31,18 @@ public class Configuration {
         return name;
     }
 
+    @JsonIgnore
     public String getFactoryClass() {
         return factoryClass;
     }
 
+    public Long getId() { return id; };
+
     protected Configuration() {}
 
     //Constructors are for testing purpose only
-    public Configuration(String name, String factoryClass, String attributes) {
+    public Configuration(Long id, String name, String factoryClass, String attributes) {
+        this.id = id;
         this.name = name;
         this.factoryClass = factoryClass;
         this.attributes = attributes;

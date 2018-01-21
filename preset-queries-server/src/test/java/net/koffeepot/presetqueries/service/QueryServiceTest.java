@@ -32,22 +32,21 @@ public class QueryServiceTest {
     @MockBean
     private QueryRepository queryRepository;
 
-    @MockBean
-    private ConfigurationRepository configurationRepository;
+    private Configuration h2Configuration;
 
     @Before
     public void initH2Configuration() {
-        Configuration h2Configuration = new Configuration(
+        h2Configuration = new Configuration(
+                anId,
                 "h2",
                 "net.koffeepot.presetqueries.datasource.H2DataSourceFactory",
                 "{\"db_close_delay\": -1}" //
         );
-        given(configurationRepository.findConfigurationByName("h2")).willReturn(h2Configuration);
     }
 
     @Test
     public void postSimpleQuery() throws Exception {
-        Query storedQuery = new Query(anId, "simple", "desc", "h2", "SELECT * FROM QUERY");
+        Query storedQuery = new Query(anId, "simple", "desc", h2Configuration, "SELECT * FROM QUERY");
         given(queryRepository.findOne(new Long(1))).willReturn(storedQuery);
         Query postedQuery = new Query(anId);
         QueryResponse response = queryService.execQuery(postedQuery);
@@ -57,7 +56,7 @@ public class QueryServiceTest {
     //Requête qui ne commence pas par un SELECT ou un sELecT ou ...
     @Test
     public void postStartingWithMixedCaseQuery() throws Exception {
-        Query storedQuery = new Query(anId, "simple", "", "h2", "SeLECt * FROM QUERY");
+        Query storedQuery = new Query(anId, "simple", "", h2Configuration, "SeLECt * FROM QUERY");
         given(queryRepository.findOne(anId)).willReturn(storedQuery);
         Query postedQuery = new Query(anId);
         QueryResponse response = queryService.execQuery(postedQuery);
@@ -66,7 +65,7 @@ public class QueryServiceTest {
 
     @Test
     public void postNotStartingWithSelectQuery() throws Exception {
-        Query storedQuery = new Query(anId, "simple", "", "h2", "Update FOO FROM BAR");
+        Query storedQuery = new Query(anId, "simple", "", h2Configuration, "Update FOO FROM BAR");
         given(queryRepository.findOne(anId)).willReturn(storedQuery);
         Query postedQuery = new Query(anId);
         assertThatThrownBy(() -> queryService.execQuery(postedQuery))
@@ -76,7 +75,7 @@ public class QueryServiceTest {
 
     @Test
     public void postQueryWithNoTemplate() throws Exception {
-        Query storedQuery = new Query(anId, "simple", "", "h2", null);
+        Query storedQuery = new Query(anId, "simple", "", h2Configuration, null);
         given(queryRepository.findOne(anId)).willReturn(storedQuery);
         Query postedQuery = new Query(anId);
         assertThatThrownBy(() -> queryService.execQuery(postedQuery))
@@ -94,23 +93,10 @@ public class QueryServiceTest {
     }
 
     @Test
-    public void postUnknownConfigurationQuery() throws Exception {
-        Query storedQuery = new Query(anId, "simple", "desc", "badconf", "SELECT * FROM QUERY");
-        given(queryRepository.findOne(anId)).willReturn(storedQuery);
-        given(configurationRepository.findConfigurationByName("badconf")).willReturn(null);
-
-        Query postedQuery = new Query(anId);
-        assertThatThrownBy(() -> queryService.execQuery(postedQuery))
-                .isInstanceOf(TechnicalRuntimeException.class)
-                .hasMessageContaining("Configuration not found: badconf");
-    }
-
-    @Test
     public void postNotADatasourceConfigurationQuery() throws Exception {
-        Query storedQuery = new Query(anId, "simple", "desc", "badimpl", "SELECT * FROM QUERY");
+        Configuration badImpl = new Configuration(new Long(2),"badimpl", "java.lang.Object", "");
+        Query storedQuery = new Query(anId, "simple", "desc", badImpl, "SELECT * FROM QUERY");
         given(queryRepository.findOne(anId)).willReturn(storedQuery);
-        Configuration badImpl = new Configuration("badimpl", "java.lang.Object", "");
-        given(configurationRepository.findConfigurationByName("badimpl")).willReturn(badImpl);
 
         Query postedQuery = new Query(anId);
         assertThatThrownBy(() -> queryService.execQuery(postedQuery))
@@ -118,10 +104,9 @@ public class QueryServiceTest {
                 .hasMessageContaining("Factory class must implement constructor with Configuration: java.lang.Object");
     }
 
-
     @Test
     public void getQueryById() {
-        Query storedQuery = new Query(anId, "simple", "desc", "badimpl", "SELECT * FROM QUERY");
+        Query storedQuery = new Query(anId, "simple", "desc", h2Configuration, "SELECT * FROM QUERY");
         given(queryRepository.findOne(anId)).willReturn(storedQuery);
         assertThat(queryService.getQuery(sId).getName()).isEqualTo("simple");
     }

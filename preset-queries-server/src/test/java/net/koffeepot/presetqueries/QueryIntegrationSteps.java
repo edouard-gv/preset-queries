@@ -3,10 +3,12 @@ package net.koffeepot.presetqueries;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.PendingException;
 import cucumber.api.java.en.Given;
+import net.koffeepot.presetqueries.entity.Configuration;
 import net.koffeepot.presetqueries.entity.Query;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
+import net.koffeepot.presetqueries.repository.ConfigurationRepository;
 import net.koffeepot.presetqueries.repository.QueryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -41,6 +43,11 @@ public class QueryIntegrationSteps {
     @Autowired
     private QueryRepository queryRepository;
 
+
+    @SuppressWarnings({"SpringJavaAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection"})
+    @Autowired
+    private ConfigurationRepository configurationRepository;
+
     @When("^I call \"([^\"]*)\"$")
     public void i_call_a_url(String url) throws Throwable {
         aResponse = restTemplate.getForEntity("/api/"+url, String.class);
@@ -68,6 +75,13 @@ public class QueryIntegrationSteps {
 
     @Given("^I initiate a mock database with a query named \"([^\"]*)\"$")
     public void iInitiateAMockDatabaseWithAQueryNamed(String name) throws Throwable {
-        queryRepository.save(new Query(new Long(1), name, "description", "source", "template"));
+        Configuration h2Configuration = new Configuration(
+                new Long(1),
+                "h2",
+                "net.koffeepot.presetqueries.datasource.H2DataSourceFactory",
+                "{\"db_close_delay\": -1}" //
+        );
+        configurationRepository.save(h2Configuration);
+        queryRepository.save(new Query(new Long(1), name, "description", h2Configuration, "template"));
     }
 }

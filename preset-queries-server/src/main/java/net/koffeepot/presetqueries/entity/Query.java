@@ -16,7 +16,12 @@ public class Query {
     private String name;
     private String description;
     private String template;
-    private String source;
+
+    @ManyToOne
+    private Configuration configuration;
+
+    @Column(name="configuration_id", updatable=false, insertable=false)
+    private Long configurationId;
 
     @ManyToMany
     @JoinTable(name="query_parameter",
@@ -32,11 +37,11 @@ public class Query {
     }
 
     //Constructors are only used by test classes.
-    public Query(Long id, String name, String description, String source, String template) {
+    public Query(Long id, String name, String description, Configuration configuration, String template) {
         this(id);
         this.name = name;
         this.description = description;
-        this.source = source;
+        this.configuration = configuration;
         this.template = template;
     }
 
@@ -57,8 +62,9 @@ public class Query {
         this.template = template;
     }
 
-    public void setSource(String source) {
-        this.source = source;
+
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
     }
 
     public Long getId() { return id; }
@@ -79,9 +85,14 @@ public class Query {
         return template;
     }
 
-    public String getSource() {
-        return source;
-    }
+    @JsonIgnore
+    public Configuration getConfiguration() { return configuration; }
 
+    public Long getConfigurationId() { return configurationId; }
+
+    //For JSON
+    public String getSource() {
+        return (configuration == null ? null : configuration.getName());
+    }
 
 }
