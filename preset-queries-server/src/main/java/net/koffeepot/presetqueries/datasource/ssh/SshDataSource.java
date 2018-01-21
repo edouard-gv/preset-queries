@@ -11,37 +11,51 @@ import java.util.Properties;
 
 public class SshDataSource extends WakableDataSource {
 
-    public static final int LOCAL_PORT = 13307;
-
     private com.jcraft.jsch.Session session;
+    private int localPort;
+    private String username;
+    private String host;
+    private int sshPort;
+    private int remotePort;
+    private String keyPath;
 
-    public SshDataSource(DataSource dataSource) {
+    public SshDataSource(DataSource dataSource, String username, String keyPath, String host, int sshPort, int localPort, int remotePort) {
         super(dataSource);
+        this.username = username;
+        this.keyPath = keyPath;
+        this.host = host;
+        this.sshPort = sshPort;
+        this.localPort = localPort;
+        this.remotePort = remotePort;
         initSshSession();
     }
 
     private void initSshSession() {
         final JSch jsch = new JSch();
-        String host = "127.0.0.1";
-        int remotePort = 3307;
+
+        String localhost = "127.0.0.1";
 
         try {
-            jsch.addIdentity("src/main/resources/id_rsa_psh");
+            jsch.addIdentity(keyPath);
+
             session = jsch.getSession(
-                    "parrot",
-                    "parrot.ent.platform.sh",
-                    22);
+                    username,
+                    host,
+                    sshPort);
             session.setServerAliveInterval(1000*60*2); //Every two minutes
             final Properties config = new Properties();
             config.put("StrictHostKeyChecking", "no");
             session.setConfig(config);
             session.connect();
-            session.setPortForwardingL(LOCAL_PORT, host, remotePort);
+            session.setPortForwardingL(localPort, localhost, remotePort);
         } catch (JSchException e) {
             throw new TechnicalRuntimeException(e);
         }
     }
 
+    /***
+     * Test if connection seems ok, if ko or never initialized (==null) restart it
+     */
     @Override
     public void wakeUp() {
 
@@ -60,7 +74,6 @@ public class SshDataSource extends WakableDataSource {
 
         if (session == null) {
             initSshSession();
-            return;
         }
     }
 }

@@ -1,22 +1,14 @@
 package net.koffeepot.presetqueries.datasource;
 
-import com.jcraft.jsch.*;
 import net.koffeepot.presetqueries.common.TechnicalRuntimeException;
 import net.koffeepot.presetqueries.entity.Configuration;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
-import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
-import java.util.logging.Logger;
 
 /* TODO : pour être indépendant du type de base, par exemple pouvoir se brancher sur de l'ES, être indépendant de java.sql.DataSource
    et pouvoir par exemple renvoyer un méthode qui prend une query string et qui renvoie deux itérables, avec des classes abstraites de base
@@ -85,7 +77,7 @@ public abstract class DataSourceFactory {
     protected abstract DataSource createDataSource()
             throws java.sql.SQLException;
 
-    Configuration configuration;
+    protected Configuration configuration;
 
     public DataSourceFactory(Configuration configuration) {
         this.configuration = configuration;

@@ -13,8 +13,17 @@ public abstract class MysqlOverSshDataSourceFactory extends MysqlDataSourceFacto
         super(configuration);
     }
 
-    protected DataSource createDataSource(String schema, String username, String password) throws SQLException {
-        WakableDataSource dataSource = new SshDataSource(super.createDataSource("localhost", SshDataSource.LOCAL_PORT, schema, username, password));
+    protected DataSource createDataSource() throws SQLException {
+
+        WakableDataSource dataSource = new SshDataSource(
+                super.createDataSource(),
+                configuration.getStringAttribute("sshUsername"),
+                configuration.getStringAttribute("sshKeyPath"),
+                configuration.getStringAttribute("sshHost"),
+                configuration.getIntegerAttribute("sshPort"),
+                configuration.getIntegerAttribute("port"),
+                configuration.getIntegerAttribute("remotePort")
+                );
         return dataSource;
     }
 }

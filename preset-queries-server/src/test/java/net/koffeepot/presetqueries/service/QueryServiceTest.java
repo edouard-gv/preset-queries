@@ -39,7 +39,7 @@ public class QueryServiceTest {
         Configuration h2Configuration = new Configuration(
                 "h2",
                 "net.koffeepot.presetqueries.datasource.H2DataSourceFactory",
-                "{db_close_delay: 1}" //
+                "{\"db_close_delay\": -1}" //
         );
         given(configurationRepository.findConfigurationByName("h2")).willReturn(h2Configuration);
     }
