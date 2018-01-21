@@ -38,6 +38,28 @@
         <input [(ngModel)]="query.template" class="form-control form-control-sm" placeholder="jdbc template" name="template">
     </div>
 
+    <hr>
+    <div>Parameters</div>
+
+    <ol>
+      <li *ngFor="let parameter of query.parameters"><strong>{{parameter.name}}</strong>
+        <div class="form-group">
+          <label>name</label>
+          <input [(ngModel)]="parameter.name" class="form-control form-control-sm" placeholder="parameter name" name="parameter-name">
+        </div>
+        <div class="form-group">
+          <label>type</label>
+          <input [(ngModel)]="parameter.type" class="form-control form-control-sm" placeholder="parameter type" name="parameter-type">
+        </div>
+        <div class="form-group">
+          <label>optional fragment</label>
+          <input [(ngModel)]="parameter.optionalFragment" class="form-control form-control-sm" placeholder="optional fragment" name="optional-fragment">
+        </div>
+      </li>
+    </ol>
+
+    <hr>
+
   </form>
 
   <button *ngIf="!query.isEdited" (click)="execute()" class="btn btn-primary btn-sm">execute</button>

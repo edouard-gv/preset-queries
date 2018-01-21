@@ -1,6 +1,7 @@
 class Parameter {
   name: string;
   type: string;
+  optionalFragment: string;
   userValue: string;
 }
 

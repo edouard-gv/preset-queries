@@ -38,10 +38,6 @@ public class Parameter {
         return userValue;
     }
 
-    public void setUserValue(String userValue) {
-        this.userValue = userValue;
-    }
-
     public String getName() {
         return name;
     }
@@ -54,6 +50,19 @@ public class Parameter {
         return optionalFragment;
     }
 
+    public void setUserValue(String userValue) {
+        this.userValue = userValue;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
 
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setOptionalFragment(String optionalFragment) {
+        this.optionalFragment = optionalFragment;
+    }
 }
