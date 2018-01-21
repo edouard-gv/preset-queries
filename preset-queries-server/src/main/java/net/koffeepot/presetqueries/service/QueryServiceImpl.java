@@ -47,6 +47,10 @@ public class QueryServiceImpl implements QueryService {
             throw new TechnicalRuntimeException("Query not found: "+postedQuery.getId());
         }
 
+        if (storedQuery.getTemplate() == null) {
+            throw new TechnicalRuntimeException("Query has no template: "+postedQuery.getId());
+        }
+
         //Storing temporary values given by the user in the query parameters so that the user cannot force anything
         mergePostedParametersInStoredQuery(postedQuery.getParameters(), storedQuery.getParameters());
 

@@ -75,6 +75,16 @@ public class QueryServiceTest {
     }
 
     @Test
+    public void postQueryWithNoTemplate() throws Exception {
+        Query storedQuery = new Query(anId, "simple", "", "h2", null);
+        given(queryRepository.findOne(anId)).willReturn(storedQuery);
+        Query postedQuery = new Query(anId);
+        assertThatThrownBy(() -> queryService.execQuery(postedQuery))
+                .isInstanceOf(TechnicalRuntimeException.class)
+                .hasMessageContaining("Query has no template: 1");
+    }
+
+    @Test
     public void postNotFoundQuery() throws Exception {
         given(queryRepository.findOne(anId)).willReturn(null);
         Query postedQuery = new Query(anId);
