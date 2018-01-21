@@ -27,5 +27,9 @@ export class QueriesComponent implements OnInit {
     this.getQueries();
   }
 
+  reloadAll(): void {
+    this.getQueries();
+    this.selectedQuery = null;
+  }
 
 }

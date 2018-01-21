@@ -1,7 +1,8 @@
 <div *ngIf="query">
   <strong>Query picked: {{ query.name }}</strong>
-  <div class="text-muted">{{ query.description}}</div>
-  <div *ngIf="query.parameters.length">
+
+  <div [hidden]="query.isEdited" class="text-muted">{{ query.description}}</div>
+  <div [hidden]="query.isEdited" *ngIf="query.parameters.length">
     <strong>Enter parameters:</strong>
     <div>
       <div class="form-group row" *ngFor="let parameter of query.parameters">
@@ -12,8 +13,32 @@
       </div>
     </div>
   </div>
-  <button (click)="post()" class="btn btn-danger btn-sm">post</button>
- <!--   <code>
+
+  <div [hidden]="!query.isEdited">
+    <div class="form-group">
+      <label >Name</label>
+      <input [(ngModel)]="query.name" class="form-control form-control-sm" placeholder="name (must be unique)">
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <input [(ngModel)]="query.description" class="form-control form-control-sm" placeholder="A business description">
+    </div>
+    <div class="form-group">
+      <label>Source</label>
+      <input [(ngModel)]="query.source" class="form-control form-control-sm" placeholder="source">
+    </div>
+    <div class="form-group">
+      <label >Template</label>
+        <input [(ngModel)]="query.template" class="form-control form-control-sm" placeholder="jdbc template">
+    </div>
+  </div>
+
+  <button *ngIf="!query.isEdited" (click)="execute()" class="btn btn-primary btn-sm">execute</button>
+  <button *ngIf="query.isEdited" (click)="update()" class="btn btn-danger btn-sm">update</button>
+
+  <button *ngIf="!query.isEdited" (click)="edit()" class="btn btn-light btn-sm float-right">edit</button>
+  <button *ngIf="query.isEdited" (click)="reload()" class="btn btn-light btn-sm float-right">cancel</button>
+  <!--   <code>
       <pre>{{query |json}}</pre>
     </code> -->
 </div>

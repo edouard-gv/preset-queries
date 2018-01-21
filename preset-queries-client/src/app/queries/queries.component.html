@@ -4,8 +4,9 @@
       [class.selected]="query === selectedQuery"
       (click)="onSelect(query)">
 
-    <span class="name">{{query.name}}</span>
+    <span class="name">{{query.name}}</span><span *ngIf="query.isEdited">*</span>
   </li>
 </ul>
-
 <app-query-detail [query]="selectedQuery"></app-query-detail>
+<hr>
+<button (click)="reloadAll()" class="btn btn-light btn-sm">Abort all editions and reload from db</button>

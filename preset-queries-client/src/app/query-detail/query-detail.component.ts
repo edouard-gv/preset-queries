@@ -18,8 +18,20 @@ export class QueryDetailComponent implements OnInit {
   ngOnInit() {
   }
 
-  post(): void {
-    this.queryService.postQuery(this.query);
+  execute(): void {
+    this.queryService.executeQuery(this.query);
+  }
+
+  update(): void {
+    this.queryService.updateQuery(this.query);
+  }
+
+  reload(): void {
+    this.queryService.reloadQuery(this.query);
+  }
+
+  edit(): void {
+    this.queryService.editQuery(this.query);
   }
 
 }

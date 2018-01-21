@@ -29,8 +29,18 @@ public class QueryController {
         return queryList;
     }
 
+    @RequestMapping(path = "/api/execute", method= RequestMethod.POST)
+    public ResponseEntity<QueryResponse> exec(@RequestBody Query query) {
+        return new ResponseEntity<>(queryService.execQuery(query), HttpStatus.OK);
+    }
+
     @RequestMapping(path = "/api/query", method= RequestMethod.POST)
-    public ResponseEntity<QueryResponse> auth(@RequestBody Query query) {
-        return new ResponseEntity<>(queryService.postQuery(query), HttpStatus.OK);
+    public ResponseEntity<Query> update(@RequestBody Query query) {
+        return new ResponseEntity<>(queryService.updateQuery(query), HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/api/query/{name}", method= RequestMethod.GET)
+    public ResponseEntity<Query> get(@PathVariable("name") String name) {
+        return new ResponseEntity<>(queryService.getQuery(name), HttpStatus.OK);
     }
 }

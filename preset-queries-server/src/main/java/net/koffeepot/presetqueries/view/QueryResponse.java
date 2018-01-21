@@ -45,9 +45,4 @@ public class QueryResponse {
         this.data = data;
         this.jdbcTemplate = jdbcTemplate;
     }
-
-    public QueryResponse(Query query, String message) {
-        this.query = query;
-        this.message = message;
-    }
 }

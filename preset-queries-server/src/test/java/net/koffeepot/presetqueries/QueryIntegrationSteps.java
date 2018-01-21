@@ -29,7 +29,7 @@ public class QueryIntegrationSteps {
 
     private Map<String, Object> session;
 
-    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @SuppressWarnings({"SpringJavaAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection"})
     @Autowired
     private TestRestTemplate restTemplate;
 
@@ -37,7 +37,7 @@ public class QueryIntegrationSteps {
     public void setUp(){
     }
 
-    @SuppressWarnings("SpringJavaAutowiringInspection")
+    @SuppressWarnings({"SpringJavaAutowiringInspection", "SpringJavaInjectionPointsAutowiringInspection"})
     @Autowired
     private QueryRepository queryRepository;
 
@@ -68,6 +68,6 @@ public class QueryIntegrationSteps {
 
     @Given("^I initiate a mock database with a query named \"([^\"]*)\"$")
     public void iInitiateAMockDatabaseWithAQueryNamed(String name) throws Throwable {
-        queryRepository.save(new Query(name, "description", "source", "template"));
+        queryRepository.save(new Query(new Long(1), name, "description", "source", "template"));
     }
 }

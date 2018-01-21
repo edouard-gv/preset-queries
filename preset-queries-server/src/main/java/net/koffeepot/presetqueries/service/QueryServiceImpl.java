@@ -35,18 +35,16 @@ public class QueryServiceImpl implements QueryService {
     }
 
     @Override
-    public QueryResponse postQuery(Query postedQuery) {
+    public QueryResponse execQuery(Query postedQuery) {
         //Checks
-        if (postedQuery == null || postedQuery.getName() == null) {
-            throw new TechnicalRuntimeException("No query in the body or name is null");
+        if (postedQuery == null || postedQuery.getId() == null) {
+            throw new TechnicalRuntimeException("No query in the body or id is null");
         }
 
-        Query storedQuery = queryRepository.findQueryByName(postedQuery.getName());
-
+        Query storedQuery = queryRepository.findOne(postedQuery.getId());
 
         if (storedQuery == null) {
-            throw new TechnicalRuntimeException("Query not found: "+postedQuery.getName());
-
+            throw new TechnicalRuntimeException("Query not found: "+postedQuery.getId());
         }
 
         //Storing temporary values given by the user in the query parameters so that the user cannot force anything
@@ -95,6 +93,49 @@ public class QueryServiceImpl implements QueryService {
         catch (SQLException ex) {
             throw new TechnicalRuntimeException(ex);
         }
+
+    }
+
+    @Override
+    public Query updateQuery(Query postedQuery) {
+        //Checks
+        if (postedQuery == null || postedQuery.getId() == null) {
+            throw new TechnicalRuntimeException("No query in the body or id is null");
+        }
+
+        Query storedQuery = queryRepository.findOne(postedQuery.getId());
+
+        if (storedQuery == null) {
+            throw new TechnicalRuntimeException("Query not found: "+postedQuery.getId());
+        }
+
+        storedQuery.setDescription(postedQuery.getDescription());
+        storedQuery.setSource(postedQuery.getSource());
+        storedQuery.setName(postedQuery.getName());
+        storedQuery.setTemplate(postedQuery.getTemplate());
+
+        this.queryRepository.save(storedQuery);
+
+        return storedQuery;
+    }
+
+    @Override
+    public Query getQuery(String sId) {
+        long id;
+        try {
+            id = Long.parseLong(sId);
+        }
+        catch (NumberFormatException nfe) {
+            throw new TechnicalRuntimeException("Not a correct id for a query: "+sId);
+        }
+
+        Query storedQuery = queryRepository.findOne(id);
+
+        if (storedQuery == null) {
+            throw new TechnicalRuntimeException("Query not found: "+sId+" ("+id+")");
+        }
+
+        return storedQuery;
 
     }
 

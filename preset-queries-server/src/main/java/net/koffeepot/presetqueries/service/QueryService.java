@@ -9,5 +9,9 @@ import java.util.List;
 public interface QueryService {
     Iterable<Query> getQueries();
 
-    QueryResponse postQuery(Query query);
+    QueryResponse execQuery(Query query);
+
+    Query updateQuery(Query query);
+
+    Query getQuery(String sId);
 }

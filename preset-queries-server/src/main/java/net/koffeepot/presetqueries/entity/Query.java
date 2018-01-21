@@ -27,22 +27,41 @@ public class Query {
     )
     private Set<Parameter> parameters;
 
+    public Query() {
+        //just there, need by Hibernate (and Jackson library, used for testing)
+    }
+
     //Constructors are only used by test classes.
-    public Query(String name, String description, String source, String template) {
-        this(name);
+    public Query(Long id, String name, String description, String source, String template) {
+        this(id);
+        this.name = name;
         this.description = description;
         this.source = source;
         this.template = template;
     }
 
-    public Query(String name) {
-        this.name = name;
+    public Query(Long id) {
+        this.id = id;
         parameters = new HashSet<>();
     }
 
-    public Query() {
-        //just there, need by Jackson library, used for testing
+    public void setName(String name) {
+        this.name = name;
     }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setTemplate(String template) {
+        this.template = template;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public Long getId() { return id; }
 
     public String getName() {
         return name;
@@ -56,7 +75,6 @@ public class Query {
         return parameters;
     }
 
-    @JsonIgnore
     public String getTemplate() {
         return template;
     }

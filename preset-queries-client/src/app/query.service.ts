@@ -27,11 +27,11 @@ export class QueryService {
       );
   }
 
-  postQuery (query: Query): void {
+  executeQuery (query: Query): void {
     this.messageService.setMainMessage(null);
-    this.http.post<QueryResponse>('api/query', query, httpOptions).pipe(
+    this.http.post<QueryResponse>('api/execute', query, httpOptions).pipe(
       tap((queryResponse: QueryResponse) => this.log(`query ${query.name} posted, returned jdbcTemplate ${queryResponse.jdbcTemplate}`)),
-      catchError(this.handleError<QueryResponse>('postQuery'))
+      catchError(this.handleError<QueryResponse>('executeQuery'))
     ).subscribe((queryResponse: QueryResponse) => {
       if (queryResponse) {
         this.dataSource = queryResponse.data;
@@ -40,6 +40,30 @@ export class QueryService {
     });
   }
 
+  updateQuery (query: Query): void {
+    this.http.post<Query>('api/query', query, httpOptions).pipe(
+      tap((queryResponse: Query) => this.log(`query ${query.name} updated`)),
+      catchError(this.handleError<Query>('executeQuery', query))
+    ).subscribe((result: Query) => {
+      query.isEdited = result.isEdited;
+    });
+
+  }
+
+  editQuery (query: Query): void {
+    query.isEdited = true;
+  }
+
+  reloadQuery (query: Query): void {
+    this.http.get<Query>('api/query/'+query.id)
+      .pipe(
+        tap(query => this.log(`query ${query.name} reloaded`)),
+        catchError(this.handleError('reloadQuery', query))
+      ).subscribe(result => {
+        query.isEdited = result.isEdited;
+        query.description = result.description;
+      });
+  }
 
   constructor(private http: HttpClient, private messageService: MessageService) { }
 

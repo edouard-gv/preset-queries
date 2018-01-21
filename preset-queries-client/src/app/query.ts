@@ -5,9 +5,13 @@ class Parameter {
 }
 
 export class Query {
+  id: number;
   name: string;
   description: string;
   parameters: Parameter[];
+  isEdited: boolean;
+  template: string;
+  source: string;
 }
 
 export class QueryResponse {
