@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { catchError, map, tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { of} from 'rxjs/observable/of';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { of } from 'rxjs/observable/of';
 
 
 import { MessageService} from './message.service';
-import {Query, QueryResponse} from './query';
+import {Configuration, Query, QueryResponse} from './query';
 
 const httpOptions = {
   headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -24,6 +23,14 @@ export class QueryService {
       .pipe(
         tap(queries => this.log(`fetched queries`)),
         catchError(this.handleError('getQueries', []))
+      );
+  }
+
+  getConfigurations(): Observable<Configuration[]> {
+    return this.http.get<Configuration[]>('api/configurations')
+      .pipe(
+        tap(results => this.log(`fetched configurations`)),
+        catchError(this.handleError('getConfigurations', []))
       );
   }
 
@@ -45,7 +52,7 @@ export class QueryService {
       tap((queryResponse: Query) => this.log(`query ${query.name} updated`)),
       catchError(this.handleError<Query>('executeQuery', query))
     ).subscribe((result: Query) => {
-      query.isEdited = result.isEdited;
+      (new Query()).merge(result, query);
     });
 
   }
@@ -60,8 +67,7 @@ export class QueryService {
         tap(query => this.log(`query ${query.name} reloaded`)),
         catchError(this.handleError('reloadQuery', query))
       ).subscribe(result => {
-        query.isEdited = result.isEdited;
-        query.description = result.description;
+      (new Query()).merge(result, query);
       });
   }
 

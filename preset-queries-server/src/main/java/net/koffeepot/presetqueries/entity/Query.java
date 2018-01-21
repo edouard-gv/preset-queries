@@ -64,7 +64,8 @@ public class Query {
 
 
     public void setConfiguration(Configuration configuration) {
-        this.configuration = configuration;
+        this.configuration = configuration; //don't forget, in order that the returned query is coherent
+        this.configurationId = (configuration == null ? null : configuration.getId());
     }
 
     public Long getId() { return id; }

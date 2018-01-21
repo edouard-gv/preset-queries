@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Query } from '../query';
+import {Configuration, Query} from '../query';
 import { QueryService} from '../query.service';
 
 @Component({
@@ -11,11 +11,18 @@ export class QueryDetailComponent implements OnInit {
 
   @Input() query: Query;
 
+  configurations: Configuration[];
+
+  getConfigurations(): void {
+    this.queryService.getConfigurations().subscribe(result => this.configurations = result);
+  }
+
   constructor(
     private queryService: QueryService
   ) { }
 
   ngOnInit() {
+    this.getConfigurations()
   }
 
   execute(): void {

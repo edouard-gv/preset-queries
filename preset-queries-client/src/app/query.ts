@@ -11,7 +11,16 @@ export class Query {
   parameters: Parameter[];
   isEdited: boolean;
   template: string;
-  source: string;
+  configurationId: number;
+
+  public merge(result: Query, query: Query): void {
+    query.name = result.name;
+    query.description = result.description;
+    query.parameters = result.parameters;
+    query.isEdited = result.isEdited;
+    query.template = result.template;
+    query.configurationId = result.configurationId;
+  }
 }
 
 export class QueryResponse {
@@ -22,3 +31,7 @@ export class QueryResponse {
   jdbcTemplate: string;
 }
 
+export class Configuration {
+  id: number;
+  name: string;
+}
