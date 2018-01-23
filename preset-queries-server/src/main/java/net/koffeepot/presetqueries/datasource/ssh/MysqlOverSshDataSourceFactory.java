@@ -7,7 +7,7 @@ import net.koffeepot.presetqueries.entity.Configuration;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
-public abstract class MysqlOverSshDataSourceFactory extends MysqlDataSourceFactory {
+public class MysqlOverSshDataSourceFactory extends MysqlDataSourceFactory {
 
     public MysqlOverSshDataSourceFactory(Configuration configuration) {
         super(configuration);
