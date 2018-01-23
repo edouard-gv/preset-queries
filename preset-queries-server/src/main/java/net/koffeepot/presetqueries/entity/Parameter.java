@@ -1,6 +1,7 @@
 package net.koffeepot.presetqueries.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import net.koffeepot.presetqueries.service.ParameterType;
 
 import javax.persistence.*;
 
@@ -11,7 +12,8 @@ public class Parameter {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Long id;
     private String name;
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private ParameterType type;
     @JsonInclude()
     @Transient
     private String userValue;
@@ -20,13 +22,13 @@ public class Parameter {
     protected Parameter() {}
 
     //Constructors are only for tests
-    public Parameter(String name, String type, String optionalFragment) {
+    public Parameter(String name, ParameterType type, String optionalFragment) {
         this.type = type;
         this.name = name;
         this.optionalFragment = optionalFragment;
     }
 
-    public Parameter(String name, String type){
+    public Parameter(String name, ParameterType type){
         this(name, type, null);
     }
 
@@ -42,7 +44,7 @@ public class Parameter {
         return name;
     }
 
-    public String getType() {
+    public ParameterType getType() {
         return type;
     }
 
@@ -58,7 +60,7 @@ public class Parameter {
         this.name = name;
     }
 
-    public void setType(String type) {
+    public void setType(ParameterType type) {
         this.type = type;
     }
 

@@ -49,7 +49,9 @@
         </div>
         <div class="form-group">
           <label>type</label>
-          <input [(ngModel)]="parameter.type" class="form-control form-control-sm" placeholder="parameter type" name="parameter-type">
+          <select [(ngModel)]="parameter.type" class="form-control form-control-sm" placeholder="parameter type" name="parameter-type">
+            <option *ngFor="let paramType of parameterTypes" [value]="paramType">{{paramType | titlecase}}</option>
+          </select>
         </div>
         <div class="form-group">
           <label>optional fragment</label>

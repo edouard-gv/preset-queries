@@ -12,9 +12,11 @@ export class QueryDetailComponent implements OnInit {
   @Input() query: Query;
 
   configurations: Configuration[];
+  parameterTypes : String[];
 
-  getConfigurations(): void {
+  getMetaData(): void {
     this.queryService.getConfigurations().subscribe(result => this.configurations = result);
+    this.queryService.getParameterTypes().subscribe(result => this.parameterTypes = result);
   }
 
   constructor(
@@ -22,7 +24,7 @@ export class QueryDetailComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.getConfigurations()
+    this.getMetaData()
   }
 
   execute(): void {

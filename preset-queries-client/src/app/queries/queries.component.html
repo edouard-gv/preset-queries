@@ -7,6 +7,7 @@
     <span class="name">{{query.name}}</span><span *ngIf="query.isEdited">*</span>
   </li>
 </ul>
+<button (click)="newQuery()" class="btn btn-light btn-sm">New query</button>
 <app-query-detail [query]="selectedQuery"></app-query-detail>
 <hr>
 <button (click)="reloadAll()" class="btn btn-light btn-sm">Abort all editions and reload from db</button>

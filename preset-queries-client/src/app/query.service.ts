@@ -34,6 +34,14 @@ export class QueryService {
       );
   }
 
+  getParameterTypes(): Observable<String[]> {
+    return this.http.get<String[]>('api/parameter-types')
+      .pipe(
+        tap(results => this.log(`fetched parameter types`)),
+        catchError(this.handleError('getParameterTypes', []))
+      );
+  }
+
   executeQuery (query: Query): void {
     this.messageService.setMainMessage(null);
     this.http.post<QueryResponse>('api/execute', query, httpOptions).pipe(

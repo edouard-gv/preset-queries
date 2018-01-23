@@ -48,12 +48,4 @@ public class QueryController {
     public ResponseEntity<Query> get(@PathVariable("name") String name) {
         return new ResponseEntity<>(queryService.getQuery(name), HttpStatus.OK);
     }
-
-    @RequestMapping(path = "/api/configurations", method= RequestMethod.GET)
-    public @ResponseBody List<Configuration> getConfigurations() {
-        //we iterate through the list at the last moment
-        List<Configuration> configurationList = new ArrayList<>();
-        configurationRepository.findAll().forEach(configurationList::add);
-        return configurationList;
-    }
 }

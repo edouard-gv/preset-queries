@@ -69,7 +69,7 @@ public class QueryServiceImpl implements QueryService {
             //TODO: should be in the convert Template method to be nearby the similar logic
             //Filtering parameters that should be given to the sqltemplate
             for (Parameter param: storedQuery.getParameters()) {
-                if (param.getType().startsWith("where")) {
+                if (param.getType().equals(ParameterType.WHERE) || param.getType().equals(ParameterType.WHERE_OPTIONAL)) {
                     paramSource.addValue(param.getName(), param.getUserValue());
                 }
             }
@@ -92,21 +92,28 @@ public class QueryServiceImpl implements QueryService {
         catch (SQLException ex) {
             throw new TechnicalRuntimeException(ex);
         }
-
     }
 
     @Override
     public Query updateQuery(Query postedQuery) {
         //Checks
-        if (postedQuery == null || postedQuery.getId() == null) {
-            throw new TechnicalRuntimeException("No query in the body or id is null");
+        if (postedQuery == null) {
+            throw new TechnicalRuntimeException("No query in the body");
         }
 
-        Query storedQuery = queryRepository.findOne(postedQuery.getId());
-
-        if (storedQuery == null) {
-            throw new TechnicalRuntimeException("Query not found: "+postedQuery.getId());
+        Query storedQuery;
+        if (postedQuery.getId() == null) { //new query, let's do some checks
+            if (postedQuery.getConfigurationId() == null) {
+                throw new TechnicalRuntimeException("No configuration found in the query");
+            }
+            storedQuery = new Query();
         }
+        else {
+            storedQuery = queryRepository.findOne(postedQuery.getId());
+            if (storedQuery == null) {
+                throw new TechnicalRuntimeException("Query not found: "+postedQuery.getId());
+            }
+        };
 
         storedQuery.setDescription(postedQuery.getDescription());
         storedQuery.setConfiguration(configurationRepository.findOne(postedQuery.getConfigurationId()));
@@ -120,7 +127,6 @@ public class QueryServiceImpl implements QueryService {
             storedParam.setType(postedParam.getType());
             storedParam.setOptionalFragment(postedParam.getOptionalFragment());
         }
-
 
         this.queryRepository.save(storedQuery);
 
@@ -150,19 +156,21 @@ public class QueryServiceImpl implements QueryService {
     String mergeTemplate(String template, Set<Parameter> parameters) {
         String jdbcTemplateString = template;
         for (Parameter param: parameters) {
-            switch (param.getType()) {
-                case "from":
-                    jdbcTemplateString = jdbcTemplateString.replaceAll(":"+param.getName(), param.getUserValue());
-                    break;
-                case "where":
-                    break;
-                case "where-optional":
-                    if (null != param.getUserValue() && !param.getUserValue().trim().isEmpty()) {
-                        jdbcTemplateString = jdbcTemplateString.replaceAll(":"+param.getName(), param.getOptionalFragment());
-                    }
-                    else {
-                        jdbcTemplateString = jdbcTemplateString.replaceAll(":"+param.getName(), "");
-                    }
+            if (param.getType() != null){
+                switch (param.getType()) {
+                    case FROM:
+                        jdbcTemplateString = jdbcTemplateString.replaceAll(":"+param.getName(), param.getUserValue());
+                        break;
+                    case WHERE:
+                        break;
+                    case WHERE_OPTIONAL:
+                        if (null != param.getUserValue() && !param.getUserValue().trim().isEmpty()) {
+                            jdbcTemplateString = jdbcTemplateString.replaceAll(":"+param.getName(), param.getOptionalFragment());
+                        }
+                        else {
+                            jdbcTemplateString = jdbcTemplateString.replaceAll(":"+param.getName(), "");
+                        }
+                }
             }
         }
         return jdbcTemplateString;

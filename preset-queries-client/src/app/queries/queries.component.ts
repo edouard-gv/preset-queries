@@ -21,6 +21,14 @@ export class QueriesComponent implements OnInit {
     this.selectedQuery = query;
   }
 
+  newQuery(): void {
+    let aQuery: Query = new Query();
+    aQuery.name = "new name";
+    aQuery.isEdited = true;
+    this.queries.push(aQuery);
+    this.selectedQuery = aQuery;
+  }
+
   constructor(private queryService: QueryService) { }
 
   ngOnInit() {

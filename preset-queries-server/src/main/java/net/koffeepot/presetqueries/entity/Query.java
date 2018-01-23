@@ -33,7 +33,8 @@ public class Query {
     private Set<Parameter> parameters;
 
     public Query() {
-        //just there, need by Hibernate (and Jackson library, used for testing)
+        //used by new Query creation, Hibernate (and Jackson library, for testing)
+        parameters = new HashSet<>();
     }
 
     //Constructors are only used by test classes.
@@ -46,8 +47,8 @@ public class Query {
     }
 
     public Query(Long id) {
+        this();
         this.id = id;
-        parameters = new HashSet<>();
     }
 
     public void setName(String name) {

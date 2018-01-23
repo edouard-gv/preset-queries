@@ -16,7 +16,7 @@ public class QueryParsingTest {
     @Test
     public void parseWithMandatoryWhereParameterQuery() throws Exception {
         Set<Parameter> parameters = new HashSet<>();
-        Parameter parameter = new Parameter("value", "where");
+        Parameter parameter = new Parameter("value", ParameterType.WHERE);
         parameter.setUserValue("FOO");
         parameters.add(parameter);
         String sql = queryService.mergeTemplate("SELECT FOO \n FROM BAR \n WHERE VALUE=:value", parameters);
@@ -27,7 +27,7 @@ public class QueryParsingTest {
     @Test
     public void parseWithGivenOptionalWhereParameterQuery() throws Exception {
         Set<Parameter> parameters = new HashSet<>();
-        Parameter parameter = new Parameter("value", "where-optional", "AND FOO=:value");
+        Parameter parameter = new Parameter("value", ParameterType.WHERE_OPTIONAL, "AND FOO=:value");
         parameter.setUserValue("FOO");
         parameters.add(parameter);
         String sql = queryService.mergeTemplate("SELECT FOO \n FROM BAR \n WHERE 1=1 :value", parameters);
@@ -38,7 +38,7 @@ public class QueryParsingTest {
     @Test
     public void parseWithUnsetOptionalWhereParameterQuery() throws Exception {
         Set<Parameter> parameters = new HashSet<>();
-        Parameter parameter = new Parameter("value", "where-optional", "AND VALUE=:value");
+        Parameter parameter = new Parameter("value", ParameterType.WHERE_OPTIONAL, "AND VALUE=:value");
         //we don't set a user value;
         parameters.add(parameter);
         String sql = queryService.mergeTemplate("SELECT FOO \n FROM BAR \n WHERE 1=1 :value", parameters);
@@ -49,7 +49,7 @@ public class QueryParsingTest {
     @Test
     public void parseWithSimpleFromParameterQuery() throws Exception {
         Set<Parameter> parameters = new HashSet<>();
-        Parameter parameter = new Parameter("table", "from");
+        Parameter parameter = new Parameter("table", ParameterType.FROM);
         parameter.setUserValue("THETABLE");
         parameters.add(parameter);
         String sql = queryService.mergeTemplate("SELECT FOO \n FROM :table.BAR", parameters);
@@ -58,12 +58,12 @@ public class QueryParsingTest {
 
     //un paramètre de type inconnu
     @Test
-    public void parseWithUnknownTypeParameterQuery() throws Exception {
+    public void parseWithNullParameterQuery() throws Exception {
         Set<Parameter> parameters = new HashSet<>();
-        Parameter parameter = new Parameter("table", "krinch");
+        Parameter parameter = new Parameter("table", null);
         parameter.setUserValue("THETABLE");
         parameters.add(parameter);
-        parameter = new Parameter("value", "krinch");
+        parameter = new Parameter("value", null);
         parameter.setUserValue("VALUE");
         parameters.add(parameter);
         String sql = queryService.mergeTemplate("SELECT FOO FROM :table.BAR WHERE GO = :value", parameters);

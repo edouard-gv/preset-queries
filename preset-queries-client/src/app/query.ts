@@ -14,6 +14,10 @@ export class Query {
   template: string;
   configurationId: number;
 
+  constructor() {
+    this.parameters = [];
+  }
+
   public merge(result: Query, query: Query): void {
     query.name = result.name;
     query.description = result.description;

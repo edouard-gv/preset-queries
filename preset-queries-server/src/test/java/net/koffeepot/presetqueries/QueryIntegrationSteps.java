@@ -2,6 +2,7 @@ package net.koffeepot.presetqueries;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cucumber.api.PendingException;
+import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import net.koffeepot.presetqueries.entity.Configuration;
 import net.koffeepot.presetqueries.entity.Query;
@@ -62,6 +63,13 @@ public class QueryIntegrationSteps {
         }
     }
 
+    @And("^I am answered \"([^\"]*)\"$")
+    public void i_am_answered(String message) throws Throwable {
+        if (message != null && !message.equals("")) {
+            assertThat(((ResponseEntity<String>)aResponse).getBody()).contains(message);
+        }
+    }
+
     @When("^I post \"([^\"]*)\" with body \"([^\"]*)\"$")
     public void i_post_with_body(String url, String body) throws Throwable {
         aResponse = restTemplate.postForEntity("/api/"+url, parseQuery(body), String.class);
@@ -70,7 +78,7 @@ public class QueryIntegrationSteps {
     public static Query parseQuery(String json)
     throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, Query.class);
+        return mapper.readValue(json.replaceAll("'","\""), Query.class);
     }
 
     @Given("^I initiate a mock database with a query named \"([^\"]*)\"$")
