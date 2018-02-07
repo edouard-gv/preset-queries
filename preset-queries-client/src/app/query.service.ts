@@ -9,7 +9,7 @@ import { MessageService} from './message.service';
 import {Configuration, Query, QueryResponse} from './query';
 
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+  headers: new HttpHeaders({ 'Content-Type': 'application/json', "KoffePot-Token": "rw-XobZPTuH59"})
 };
 
 @Injectable()
@@ -19,7 +19,7 @@ export class QueryService {
   dataSource: string[][] = [];
 
   getQueries(): Observable<Query[]> {
-    return this.http.get<Query[]>('api/queries')
+    return this.http.get<Query[]>('api/queries', {headers: {"KoffePot-Token": "ro-pjha00ippK"}})
       .pipe(
         tap(queries => this.log(`fetched queries`)),
         catchError(this.handleError('getQueries', []))
@@ -70,7 +70,7 @@ export class QueryService {
   }
 
   reloadQuery (query: Query): void {
-    this.http.get<Query>('api/query/'+query.id)
+    this.http.get<Query>('api/query/'+query.id, {headers: {"KoffePot-Token": "ro-pjha00ippK"}})
       .pipe(
         tap(query => this.log(`query ${query.name} reloaded`)),
         catchError(this.handleError('reloadQuery', query))

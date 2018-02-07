@@ -1,7 +1,6 @@
 package net.koffeepot.presetqueries;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cucumber.api.PendingException;
 import cucumber.api.java.en.And;
 import cucumber.api.java.en.Given;
 import net.koffeepot.presetqueries.entity.Configuration;
@@ -18,6 +17,7 @@ import org.springframework.http.*;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.*;
@@ -25,8 +25,6 @@ import static org.assertj.core.api.Assertions.*;
 @ContextConfiguration
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class QueryIntegrationSteps {
-
-    private static final String USER_KEY = "loggedUser";
 
     private ResponseEntity aResponse;
 
@@ -51,6 +49,7 @@ public class QueryIntegrationSteps {
 
     @When("^I call \"([^\"]*)\"$")
     public void i_call_a_url(String url) throws Throwable {
+        setHeader("KoffePot-Token", "ro-pjha00ippK");
         aResponse = restTemplate.getForEntity("/api/"+url, String.class);
     }
 
@@ -70,15 +69,15 @@ public class QueryIntegrationSteps {
         }
     }
 
-    @When("^I post \"([^\"]*)\" with body \"([^\"]*)\"$")
-    public void i_post_with_body(String url, String body) throws Throwable {
-        aResponse = restTemplate.postForEntity("/api/"+url, parseQuery(body), String.class);
-    }
+    @When("^I post \"([^\"]*)\" with body \"([^\"]*)\" and token \"([^\"]*)\" in header$")
+    public void i_post_with_body(String url, String body, String header) throws Throwable {
+        if ("null".equals(header)) {
+            header = null;
+        }
 
-    public static Query parseQuery(String json)
-    throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json.replaceAll("'","\""), Query.class);
+        setHeader("KoffePot-Token", header);
+
+        aResponse = restTemplate.postForEntity("/api/"+url, parseQuery(body), String.class);
     }
 
     @Given("^I initiate a mock database with a query named \"([^\"]*)\"$")
@@ -91,5 +90,20 @@ public class QueryIntegrationSteps {
         );
         configurationRepository.save(h2Configuration);
         queryRepository.save(new Query(new Long(1), name, "description", h2Configuration, "template"));
+    }
+
+    public static Query parseQuery(String json)
+            throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readValue(json.replaceAll("'","\""), Query.class);
+    }
+
+    private void setHeader(String headerName, String headerValue) {
+        restTemplate.getRestTemplate().setInterceptors(
+                Collections.singletonList((request, aBody, execution) -> {
+                    request.getHeaders()
+                            .add(headerName, headerValue);
+                    return execution.execute(request, aBody);
+                }));
     }
 }

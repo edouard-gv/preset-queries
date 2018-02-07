@@ -22,3 +22,7 @@ nbbuild/
 dist/
 nbdist/
 .nb-gradle/
+
+#In order not to have our config under Git, nor our key
+src/main/resources/application.properties
+src/main/resources/id_rsa*
