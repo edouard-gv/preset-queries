@@ -3,9 +3,13 @@
 <!--  <div class="row">
     <app-header [title]="title"></app-header>
   </div> -->
-  <div class="row">
+  <div class="row" *ngIf="roleService.token">
     <div class="col-xs-12 col-md-3"><app-queries></app-queries></div>
     <div class="col-xs-12 col-md-9"><app-data-table></app-data-table></div>
+  </div>
+  <div class="jumbotron" *ngIf="!roleService.token">
+    <p>Please log-in using your "AD" / "Windows" credentials, in the upper right corner</p>
+    <p *ngIf="messageService.mainMessage">{{messageService.mainMessage}}</p>
   </div>
   <div class="row">
     <div class="col-md-12"><app-messages></app-messages></div>

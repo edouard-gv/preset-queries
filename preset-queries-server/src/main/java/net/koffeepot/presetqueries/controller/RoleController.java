@@ -32,14 +32,31 @@ public class RoleController {
         String password;
     }
 
+    public static class TokenWrapper {
+        public TokenWrapper(String token) {
+            this.token = token;
+        }
+
+        public String getToken() {
+            return token;
+        }
+
+        public void setToken(String token) {
+            this.token = token;
+        }
+
+        String token;
+
+    }
+
     @Autowired
     private RoleService roleService;
 
     //TODO integrate in a integration test?
     @RequestMapping(path = "/api/login", method= RequestMethod.POST)
     public @ResponseBody
-    String login(@RequestBody UserLogin body) {
-        return roleService.getAuthToken(body.getLogin(), body.getPassword());
+    TokenWrapper login(@RequestBody UserLogin body) {
+        return new TokenWrapper(roleService.getAuthToken(body.getLogin(), body.getPassword()));
     }
 
 }

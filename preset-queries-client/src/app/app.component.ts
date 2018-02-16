@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import {MessageService} from './message.service';
+
+import {RoleService} from "./role.service";
+import {MessageService} from "./message.service";
 
 @Component({
   selector: 'app-root',
@@ -8,5 +10,9 @@ import {MessageService} from './message.service';
 })
 export class AppComponent {
   title = 'Preset Queries';
-  constructor() { }
+  constructor(public roleService: RoleService, public messageService: MessageService) { }
+
+  ngOnInit() {
+    this.roleService.loadData();
+  }
 }

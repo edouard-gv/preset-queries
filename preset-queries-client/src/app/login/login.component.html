@@ -1,0 +1,7 @@
+  <form class="form-inline my-2 my-lg-0">
+    <span  *ngIf="roleService.token" class="mr-sm-2">logged as: <b>{{roleService.login}}</b></span>
+    <button *ngIf="roleService.token" (click)="logout()" class="btn btn-outline-danger btn-sm">Log Out</button>
+    <input *ngIf="!roleService.token" [(ngModel)]="roleService.login" class="form-control form-control-sm mr-sm-2" placeholder="Login" name="login">
+    <input *ngIf="!roleService.token" [(ngModel)]="password" type="password" class="form-control form-control-sm mr-sm-2" placeholder="password" name="password">
+    <button *ngIf="!roleService.token" (click)="authenticate()" class="btn btn-outline-success btn-sm mr-sm-2">Log In</button>
+  </form>

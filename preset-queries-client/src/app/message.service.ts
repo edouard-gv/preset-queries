@@ -10,10 +10,12 @@ export class MessageService {
   }
 
   setMainMessage(message: string) {
+    this.add(message);
     this.mainMessage = message;
   }
 
   clear() {
     this.messages = [];
+    this.mainMessage = null;
   }
 }

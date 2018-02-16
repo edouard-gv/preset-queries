@@ -1,25 +1,32 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { catchError, tap } from 'rxjs/operators';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { of } from 'rxjs/observable/of';
 
 
 import { MessageService} from './message.service';
 import {Configuration, Query, QueryResponse} from './query';
+import {RoleService} from "./role.service";
 
-const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json', "KoffePot-Token": "rw-XobZPTuH59"})
-};
+
 
 @Injectable()
 export class QueryService {
+
+  private buildHttpPostOptions() {
+    return {headers: {'Content-Type': 'application/json', "KoffePot-Token": this.roleService.token}};
+  }
+
+  private buildHttpGetOptions() {
+    return {headers: {"KoffePot-Token": this.roleService.token}};
+  }
 
   headerSource: string[] = ['--'];
   dataSource: string[][] = [];
 
   getQueries(): Observable<Query[]> {
-    return this.http.get<Query[]>('api/queries', {headers: {"KoffePot-Token": "ro-pjha00ippK"}})
+    return this.http.get<Query[]>('api/queries', this.buildHttpGetOptions())
       .pipe(
         tap(queries => this.log(`fetched queries`)),
         catchError(this.handleError('getQueries', []))
@@ -44,7 +51,7 @@ export class QueryService {
 
   executeQuery (query: Query): void {
     this.messageService.setMainMessage(null);
-    this.http.post<QueryResponse>('api/execute', query, httpOptions).pipe(
+    this.http.post<QueryResponse>('api/execute', query, this.buildHttpPostOptions()).pipe(
       tap((queryResponse: QueryResponse) => this.log(`query ${query.name} posted, returned jdbcTemplate ${queryResponse.jdbcTemplate}`)),
       catchError(this.handleError<QueryResponse>('executeQuery'))
     ).subscribe((queryResponse: QueryResponse) => {
@@ -56,7 +63,7 @@ export class QueryService {
   }
 
   updateQuery (query: Query): void {
-    this.http.post<Query>('api/query', query, httpOptions).pipe(
+    this.http.post<Query>('api/query', query, this.buildHttpPostOptions()).pipe(
       tap((queryResponse: Query) => this.log(`query ${query.name} updated`)),
       catchError(this.handleError<Query>('executeQuery', query))
     ).subscribe((result: Query) => {
@@ -70,7 +77,7 @@ export class QueryService {
   }
 
   reloadQuery (query: Query): void {
-    this.http.get<Query>('api/query/'+query.id, {headers: {"KoffePot-Token": "ro-pjha00ippK"}})
+    this.http.get<Query>('api/query/'+query.id, this.buildHttpGetOptions())
       .pipe(
         tap(query => this.log(`query ${query.name} reloaded`)),
         catchError(this.handleError('reloadQuery', query))
@@ -79,7 +86,7 @@ export class QueryService {
       });
   }
 
-  constructor(private http: HttpClient, private messageService: MessageService) { }
+  constructor(private http: HttpClient, private messageService: MessageService, private roleService: RoleService) { }
 
   /**
    * Handle Http operation that failed.
