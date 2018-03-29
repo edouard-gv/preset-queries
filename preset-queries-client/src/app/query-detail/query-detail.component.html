@@ -49,12 +49,12 @@
         </div>
         <div class="form-group">
           <label>type</label>
-          <select [(ngModel)]="parameter.type" class="form-control form-control-sm" placeholder="parameter type" name="parameter-type">
-            <option *ngFor="let paramType of parameterTypes" [value]="paramType">{{paramType | titlecase}}</option>
+          <select [(ngModel)]="parameter.type" [compareWith]="customCompareParameterType" class="form-control form-control-sm" placeholder="parameter type" name="parameter-type">
+            <option *ngFor="let paramType of parameterTypes" [ngValue]="paramType">{{paramType.label}}</option>
           </select>
         </div>
-        <div class="form-group">
-          <label>optional fragment</label>
+        <div *ngIf="parameter.type.parametersLabel" class="form-group">
+          <label>{{parameter.type.parametersLabel}} ({{parameter.type.hint}})</label>
           <textarea [(ngModel)]="parameter.optionalFragment" class="form-control form-control-sm" placeholder="optional fragment" name="optional-fragment"></textarea>
         </div>
       </li>

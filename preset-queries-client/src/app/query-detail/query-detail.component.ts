@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import {Configuration, Query} from '../query';
+import {Configuration, ParameterType, Query} from '../query';
 import { QueryService} from '../query.service';
 
 @Component({
@@ -9,10 +9,14 @@ import { QueryService} from '../query.service';
 })
 export class QueryDetailComponent implements OnInit {
 
+  customCompareParameterType(o1: ParameterType, o2: ParameterType): boolean {
+    return (o1 == null && o2 == null) || (o1 != null && o2 != null) && (o1.name == o2.name);
+  }
+
   @Input() query: Query;
 
   configurations: Configuration[];
-  parameterTypes : String[];
+  parameterTypes : ParameterType[];
 
   getMetaData(): void {
     this.queryService.getConfigurations().subscribe(result => this.configurations = result);
