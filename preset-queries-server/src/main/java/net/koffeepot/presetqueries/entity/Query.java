@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 @Entity
@@ -97,4 +98,26 @@ public class Query {
         return (configuration == null ? null : configuration.getName());
     }
 
+
+    public void updateParameters(Set<Parameter> parameters) {
+        //TODO: Parameters are not shared between queries
+        Iterator<Parameter> postedParams = parameters.iterator();
+        Set<Parameter> elementToRemove = new HashSet<>();
+        for (Parameter storedParam : getParameters()) {
+            if (postedParams.hasNext()) {
+                Parameter postedParam = postedParams.next();
+                storedParam.update(postedParam);
+            }
+            else {
+                elementToRemove.add(storedParam);
+            }
+        }
+        //If some parameters are to be removed
+        getParameters().removeAll(elementToRemove);
+
+        //If some parameters are to be added
+        while (postedParams.hasNext()) {
+            getParameters().add(postedParams.next());
+        }
+    }
 }

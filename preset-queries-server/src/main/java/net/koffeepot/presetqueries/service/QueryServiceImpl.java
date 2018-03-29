@@ -200,13 +200,7 @@ public class QueryServiceImpl implements QueryService {
         storedQuery.setConfiguration(configurationRepository.findOne(postedQuery.getConfigurationId()));
         storedQuery.setName(postedQuery.getName());
         storedQuery.setTemplate(postedQuery.getTemplate());
-        Iterator<Parameter> postedParams = postedQuery.getParameters().iterator();
-        //No possibility to add parameters for the moment, and parameters are not shared by queries
-        for (Parameter storedParam : storedQuery.getParameters()) {
-            Parameter postedParam = postedParams.next();
-            storedParam.setName(postedParam.getName());
-            storedParam.setType(postedParam.getType());
-            storedParam.setOptionalFragment(postedParam.getOptionalFragment());
-        }
+        storedQuery.updateParameters(postedQuery.getParameters());
     }
+
 }
