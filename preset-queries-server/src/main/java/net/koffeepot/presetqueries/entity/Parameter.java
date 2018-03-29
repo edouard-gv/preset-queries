@@ -67,4 +67,10 @@ public class Parameter {
     public void setOptionalFragment(String optionalFragment) {
         this.optionalFragment = optionalFragment;
     }
+
+    public void update(Parameter param) {
+        setName(param.getName());
+        setType(param.getType());
+        setOptionalFragment(param.getOptionalFragment());
+    }
 }

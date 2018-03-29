@@ -19,10 +19,18 @@ public class QueryResponse {
         return data;
     }
 
+    public void setData(List<List<String>> data) {
+        this.data = data;
+    }
+
     private List<List<String>> data;
 
     public List<String> getHeader() {
         return header;
+    }
+
+    public void setHeader(List<String> header) {
+        this.header = header;
     }
 
     private List<String> header;
@@ -31,18 +39,20 @@ public class QueryResponse {
         return query;
     }
 
+    public void setQuery(Query query) {
+        this.query = query;
+    }
+
     private Query query;
 
     public String getJdbcTemplate() {
         return jdbcTemplate;
     }
 
-    private String jdbcTemplate;
-
-    public QueryResponse(Query query, List<String> header, List<List<String>> data, String jdbcTemplate) {
-        this.query = query;
-        this.header = header;
-        this.data = data;
+    public void setJdbcTemplate(String jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
+    private String jdbcTemplate;
+
 }

@@ -30,110 +30,6 @@ public class QueryServiceImpl implements QueryService {
     ConfigurationRepository configurationRepository;
 
     @Override
-    public QueryResponse execQuery(Query postedQuery) {
-        //Checks
-        if (postedQuery == null || postedQuery.getId() == null) {
-            throw new TechnicalRuntimeException("No query in the body or id is null");
-        }
-
-        Query storedQuery = queryRepository.findOne(postedQuery.getId());
-
-        if (storedQuery == null) {
-            throw new TechnicalRuntimeException("Query not found: "+postedQuery.getId());
-        }
-
-        if (storedQuery.getTemplate() == null) {
-            throw new TechnicalRuntimeException("Query has no template: "+postedQuery.getId());
-        }
-
-        //Storing temporary values given by the user in the query parameters so that the user cannot force anything
-        mergePostedParametersInStoredQuery(postedQuery.getParameters(), storedQuery.getParameters());
-
-        if (!storedQuery.getTemplate().toUpperCase().startsWith("SELECT")) {
-            throw new TechnicalRuntimeException("Query must start with SELECT: "+storedQuery.getTemplate());
-        }
-
-        //Computing the prepared statement
-        String jdbcTemplateString = mergeTemplate(storedQuery.getTemplate(), storedQuery.getParameters());
-
-        try {
-            Configuration configuration = storedQuery.getConfiguration();
-            if (configuration == null) {
-                throw new TechnicalRuntimeException("Query has no source configuration: "+storedQuery.getName());
-            }
-            NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(
-                    DataSourceFactory.getDataSource(configuration)
-            );
-
-            MapSqlParameterSource paramSource = new MapSqlParameterSource();
-            //TODO: should be in the convert Template method to be nearby the similar logic
-            //Filtering parameters that should be given to the sqltemplate
-            for (Parameter param: storedQuery.getParameters()) {
-                if (param.getType().equals(ParameterType.WHERE) || param.getType().equals(ParameterType.WHERE_OPTIONAL)) {
-                    paramSource.addValue(param.getName(), param.getUserValue());
-                }
-            }
-            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(jdbcTemplateString, paramSource);
-
-            //Getting data and header from rowset
-            SqlRowSetMetaData md = rowSet.getMetaData();
-            List<String> header = Arrays.asList(md.getColumnNames());
-            List<List<String>> data = new ArrayList<>();
-            while (rowSet.next()) {
-                List<String> row = new ArrayList(header.size());
-                for (String col: header) {
-                    row.add(rowSet.getObject(col)==null ? null : rowSet.getObject(col).toString());
-                }
-                data.add(row);
-            }
-
-            return new QueryResponse(postedQuery, header, data, jdbcTemplateString);
-        }
-        catch (SQLException ex) {
-            throw new TechnicalRuntimeException(ex);
-        }
-    }
-
-    @Override
-    public Query updateQuery(Query postedQuery) {
-        //Checks
-        if (postedQuery == null) {
-            throw new TechnicalRuntimeException("No query in the body");
-        }
-
-        Query storedQuery;
-        if (postedQuery.getId() == null) { //new query, let's do some checks
-            if (postedQuery.getConfigurationId() == null) {
-                throw new TechnicalRuntimeException("No configuration found in the query");
-            }
-            storedQuery = new Query();
-        }
-        else {
-            storedQuery = queryRepository.findOne(postedQuery.getId());
-            if (storedQuery == null) {
-                throw new TechnicalRuntimeException("Query not found: "+postedQuery.getId());
-            }
-        };
-
-        storedQuery.setDescription(postedQuery.getDescription());
-        storedQuery.setConfiguration(configurationRepository.findOne(postedQuery.getConfigurationId()));
-        storedQuery.setName(postedQuery.getName());
-        storedQuery.setTemplate(postedQuery.getTemplate());
-        Iterator<Parameter> postedParams = postedQuery.getParameters().iterator();
-        //No possibility to add parameters for the moment, and parameters are not shared by queries
-        for (Parameter storedParam : storedQuery.getParameters()) {
-            Parameter postedParam = postedParams.next();
-            storedParam.setName(postedParam.getName());
-            storedParam.setType(postedParam.getType());
-            storedParam.setOptionalFragment(postedParam.getOptionalFragment());
-        }
-
-        this.queryRepository.save(storedQuery);
-
-        return storedQuery;
-    }
-
-    @Override
     public Query getQuery(String sId) {
         long id;
         try {
@@ -153,29 +49,66 @@ public class QueryServiceImpl implements QueryService {
 
     }
 
-    String mergeTemplate(String template, Set<Parameter> parameters) {
-        String jdbcTemplateString = template;
-        for (Parameter param: parameters) {
-            if (param.getType() != null){
-                switch (param.getType()) {
-                    case FROM:
-                        jdbcTemplateString = jdbcTemplateString.replaceAll(":"+param.getName(), param.getUserValue());
-                        break;
-                    case WHERE:
-                        break;
-                    case WHERE_OPTIONAL:
-                        if (null != param.getUserValue() && !param.getUserValue().trim().isEmpty()) {
-                            jdbcTemplateString = jdbcTemplateString.replaceAll(":"+param.getName(), param.getOptionalFragment());
-                        }
-                        else {
-                            jdbcTemplateString = jdbcTemplateString.replaceAll(":"+param.getName(), "");
-                        }
-                }
-            }
-        }
-        return jdbcTemplateString;
+    @Override
+    public QueryResponse execQuery(Query postedQuery) {
+        Query storedQuery = checkAndGetQueryForExec(postedQuery);
+        QueryResponse queryResponse = new QueryResponse();
+        //queryResponse will act as a collecting parameter except for mergedParams which I don't want to send back to the client
+        Configuration queryConfiguration = storedQuery.getConfiguration();
+
+        mergePostedParametersInStoredQuery(postedQuery.getParameters(), storedQuery.getParameters());
+        MapSqlParameterSource mergedParams  = computeTemplateAndParams(storedQuery.getTemplate(), storedQuery.getParameters(), queryResponse);
+
+        queryResponse.setQuery(postedQuery);
+
+        computeHeaderAndData(queryConfiguration, mergedParams, queryResponse);
+        return queryResponse;
     }
 
+    @Override
+    public Query updateQuery(Query postedQuery) {
+        Query storedQuery = checkAndGetQueryForUpdate(postedQuery);
+
+        updateQueryData(postedQuery, storedQuery);
+
+        this.queryRepository.save(storedQuery);
+
+        return storedQuery;
+    }
+
+    private Query checkAndGetQueryForExec(Query postedQuery) {
+        //Checks
+        if (postedQuery == null || postedQuery.getId() == null) {
+            throw new TechnicalRuntimeException("No query in the body or id is null");
+        }
+
+        Query storedQuery = queryRepository.findOne(postedQuery.getId());
+
+        if (storedQuery == null) {
+            throw new TechnicalRuntimeException("Query not found: "+ postedQuery.getId());
+        }
+
+        if (storedQuery.getTemplate() == null) {
+            throw new TechnicalRuntimeException("Query has no template: "+ postedQuery.getId());
+        }
+
+        if (!storedQuery.getTemplate().toUpperCase().startsWith("SELECT")) {
+            throw new TechnicalRuntimeException("Query must start with SELECT: "+ storedQuery.getTemplate());
+        }
+
+        if (storedQuery.getConfiguration() == null) {
+            throw new TechnicalRuntimeException("Query has no source configuration: "+ storedQuery.getName());
+        }
+
+        return storedQuery;
+    }
+
+    /***
+     * Stores values given by the user in the query parameters
+     * in order to use the stored parameter and not the posted parameter that the client could have changed
+     * @param postedParameters
+     * @param storedParameters
+     */
     void mergePostedParametersInStoredQuery(Set<Parameter> postedParameters, Set<Parameter> storedParameters) {
         Map<String, String> postedMap = new HashMap<>();
         postedParameters.forEach(param -> postedMap.put(param.getName(), param.getUserValue()));
@@ -185,4 +118,89 @@ public class QueryServiceImpl implements QueryService {
             }
         }
     }
+
+    MapSqlParameterSource computeTemplateAndParams(String template, Set<Parameter> storedParams, QueryResponse queryResponse) {
+        MapSqlParameterSource mergedParams = new MapSqlParameterSource();
+        String jdbcTemplateString = template;
+        for (Parameter param : storedParams) {
+            if (param.getType() != null){
+                switch (param.getType()) {
+                    case FROM:
+                        jdbcTemplateString = jdbcTemplateString.replaceAll(":"+ param.getName(), param.getUserValue());
+                        break;
+                    case WHERE:
+                        mergedParams.addValue(param.getName(), param.getUserValue());
+                        break;
+                    case WHERE_OPTIONAL:
+                        if (null != param.getUserValue() && !param.getUserValue().trim().isEmpty()) {
+                            jdbcTemplateString = jdbcTemplateString.replaceAll(":"+ param.getName(), param.getOptionalFragment());
+                            mergedParams.addValue(param.getName(), param.getUserValue());
+                        }
+                        else {
+                            jdbcTemplateString = jdbcTemplateString.replaceAll(":"+ param.getName(), "");
+                        }
+                }
+            }
+        }
+        queryResponse.setJdbcTemplate(jdbcTemplateString);
+        return mergedParams;
+    }
+
+    private void computeHeaderAndData(Configuration queryConfiguration, MapSqlParameterSource mergedParams, QueryResponse queryResponse) {
+        try {
+            NamedParameterJdbcTemplate jdbcTemplate = new NamedParameterJdbcTemplate(
+                    DataSourceFactory.getDataSource(queryConfiguration)
+            );
+
+            SqlRowSet rowSet = jdbcTemplate.queryForRowSet(queryResponse.getJdbcTemplate(), mergedParams);
+
+            //Getting data and header from rowset
+            SqlRowSetMetaData md = rowSet.getMetaData();
+            List<String> header = Arrays.asList(md.getColumnNames());
+            List<List<String>> data = new ArrayList<>();
+            while (rowSet.next()) {
+                List<String> row = new ArrayList<>(header.size());
+                for (String col: header) {
+                    row.add(rowSet.getObject(col)==null ? null : rowSet.getObject(col).toString());
+                }
+                data.add(row);
+            }
+            queryResponse.setData(data);
+            queryResponse.setHeader(header);
+        }
+        catch (SQLException ex) {
+            throw new TechnicalRuntimeException(ex);
+        }
+    }
+
+    private Query checkAndGetQueryForUpdate(Query postedQuery) {
+        //Checks
+        if (postedQuery == null) {
+            throw new TechnicalRuntimeException("No query in the body");
+        }
+
+        Query storedQuery;
+        if (postedQuery.getId() == null) { //new query, let's do some checks
+            if (postedQuery.getConfigurationId() == null) {
+                throw new TechnicalRuntimeException("No configuration found in the query");
+            }
+            storedQuery = new Query();
+        }
+        else {
+            storedQuery = queryRepository.findOne(postedQuery.getId());
+            if (storedQuery == null) {
+                throw new TechnicalRuntimeException("Query not found: "+postedQuery.getId());
+            }
+        }
+        return storedQuery;
+    }
+
+    void updateQueryData(Query postedQuery, Query storedQuery) {
+        storedQuery.setDescription(postedQuery.getDescription());
+        storedQuery.setConfiguration(configurationRepository.findOne(postedQuery.getConfigurationId()));
+        storedQuery.setName(postedQuery.getName());
+        storedQuery.setTemplate(postedQuery.getTemplate());
+        storedQuery.updateParameters(postedQuery.getParameters());
+    }
+
 }

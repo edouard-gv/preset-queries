@@ -1,7 +1,9 @@
 package net.koffeepot.presetqueries.service;
 
 import net.koffeepot.presetqueries.entity.Parameter;
+import net.koffeepot.presetqueries.view.QueryResponse;
 import org.junit.Test;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -19,8 +21,10 @@ public class QueryParsingTest {
         Parameter parameter = new Parameter("value", ParameterType.WHERE);
         parameter.setUserValue("FOO");
         parameters.add(parameter);
-        String sql = queryService.mergeTemplate("SELECT FOO \n FROM BAR \n WHERE VALUE=:value", parameters);
-        assertThat(sql).isEqualTo("SELECT FOO \n FROM BAR \n WHERE VALUE=:value");
+        QueryResponse queryResponse = new QueryResponse();
+        MapSqlParameterSource mergedParams = queryService.computeTemplateAndParams("SELECT FOO \n FROM BAR \n WHERE VALUE=:value", parameters, queryResponse);
+        assertThat(queryResponse.getJdbcTemplate()).isEqualTo("SELECT FOO \n FROM BAR \n WHERE VALUE=:value");
+        assertThat(mergedParams.getValue("value")).isEqualTo("FOO");
     }
 
     //un paramètre where simple facultatif, cas avec
@@ -30,8 +34,10 @@ public class QueryParsingTest {
         Parameter parameter = new Parameter("value", ParameterType.WHERE_OPTIONAL, "AND FOO=:value");
         parameter.setUserValue("FOO");
         parameters.add(parameter);
-        String sql = queryService.mergeTemplate("SELECT FOO \n FROM BAR \n WHERE 1=1 :value", parameters);
-        assertThat(sql).isEqualTo("SELECT FOO \n FROM BAR \n WHERE 1=1 AND FOO=:value");
+        QueryResponse queryResponse = new QueryResponse();
+        MapSqlParameterSource mergedParams = queryService.computeTemplateAndParams("SELECT FOO \n FROM BAR \n WHERE 1=1 :value", parameters, queryResponse);
+        assertThat(queryResponse.getJdbcTemplate()).isEqualTo("SELECT FOO \n FROM BAR \n WHERE 1=1 AND FOO=:value");
+        assertThat(mergedParams.getValue("value")).isEqualTo("FOO");
     }
 
     //ou sans
@@ -41,8 +47,23 @@ public class QueryParsingTest {
         Parameter parameter = new Parameter("value", ParameterType.WHERE_OPTIONAL, "AND VALUE=:value");
         //we don't set a user value;
         parameters.add(parameter);
-        String sql = queryService.mergeTemplate("SELECT FOO \n FROM BAR \n WHERE 1=1 :value", parameters);
-        assertThat(sql).isEqualTo("SELECT FOO \n FROM BAR \n WHERE 1=1 ");
+        QueryResponse queryResponse = new QueryResponse();
+        MapSqlParameterSource mergedParams = queryService.computeTemplateAndParams("SELECT FOO \n FROM BAR \n WHERE 1=1 :value", parameters, queryResponse);
+        assertThat(queryResponse.getJdbcTemplate()).isEqualTo("SELECT FOO \n FROM BAR \n WHERE 1=1 ");
+        assertThat(mergedParams.getValues()).isEmpty();
+    }
+
+    //ou virtuellement vide
+    @Test
+    public void parseWithEmptyOptionalWhereParameterQuery() throws Exception {
+        Set<Parameter> parameters = new HashSet<>();
+        Parameter parameter = new Parameter("value", ParameterType.WHERE_OPTIONAL, "AND VALUE=:value");
+        parameter.setUserValue("   ");
+        parameters.add(parameter);
+        QueryResponse queryResponse = new QueryResponse();
+        MapSqlParameterSource mergedParams = queryService.computeTemplateAndParams("SELECT FOO \n FROM BAR \n WHERE 1=1 :value", parameters, queryResponse);
+        assertThat(queryResponse.getJdbcTemplate()).isEqualTo("SELECT FOO \n FROM BAR \n WHERE 1=1 ");
+        assertThat(mergedParams.getValues()).isEmpty();
     }
 
     //un paramètre from
@@ -52,8 +73,11 @@ public class QueryParsingTest {
         Parameter parameter = new Parameter("table", ParameterType.FROM);
         parameter.setUserValue("THETABLE");
         parameters.add(parameter);
-        String sql = queryService.mergeTemplate("SELECT FOO \n FROM :table.BAR", parameters);
-        assertThat(sql).isEqualTo("SELECT FOO \n FROM THETABLE.BAR");
+        QueryResponse queryResponse = new QueryResponse();
+        MapSqlParameterSource mergedParams = queryService.computeTemplateAndParams("SELECT FOO \n FROM :table.BAR", parameters, queryResponse);
+        assertThat(queryResponse.getJdbcTemplate()).isEqualTo("SELECT FOO \n FROM THETABLE.BAR");
+        assertThat(mergedParams.getValues()).isEmpty();
+
     }
 
     //un paramètre de type inconnu
@@ -66,7 +90,9 @@ public class QueryParsingTest {
         parameter = new Parameter("value", null);
         parameter.setUserValue("VALUE");
         parameters.add(parameter);
-        String sql = queryService.mergeTemplate("SELECT FOO FROM :table.BAR WHERE GO = :value", parameters);
-        assertThat(sql).isEqualTo("SELECT FOO FROM :table.BAR WHERE GO = :value");
+        QueryResponse queryResponse = new QueryResponse();
+        MapSqlParameterSource mergedParams = queryService.computeTemplateAndParams("SELECT FOO FROM :table.BAR WHERE GO = :value", parameters, queryResponse);
+        assertThat(queryResponse.getJdbcTemplate()).isEqualTo("SELECT FOO FROM :table.BAR WHERE GO = :value");
+        assertThat(mergedParams.getValues()).isEmpty();
     }
 }
