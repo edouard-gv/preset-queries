@@ -57,8 +57,10 @@
           <label>{{parameter.type.parametersLabel}} ({{parameter.type.hint}})</label>
           <textarea [(ngModel)]="parameter.optionalFragment" class="form-control form-control-sm" placeholder="optional fragment" name="optional-fragment"></textarea>
         </div>
+        <button (click)="query.parameters.splice(index,1)" class="btn btn-danger btn-sm">delete</button>
       </li>
     </ol>
+    <button (click)="addParameter()" class="btn btn-info btn-sm">add</button>
 
     <hr>
 

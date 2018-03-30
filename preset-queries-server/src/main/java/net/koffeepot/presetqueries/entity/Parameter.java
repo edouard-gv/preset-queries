@@ -1,9 +1,12 @@
 package net.koffeepot.presetqueries.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import net.koffeepot.presetqueries.service.ParameterType;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Parameter {
@@ -19,6 +22,10 @@ public class Parameter {
     private String userValue;
     private String optionalFragment;
 
+    @JsonIgnore
+    @ManyToMany(mappedBy = "parameters")
+    private Set<Query> queries;
+
     protected Parameter() {}
 
     //Constructors are only for tests
@@ -26,6 +33,7 @@ public class Parameter {
         this.type = type;
         this.name = name;
         this.optionalFragment = optionalFragment;
+        this.queries = new HashSet<>();
     }
 
     public Parameter(String name, ParameterType type){
@@ -72,5 +80,9 @@ public class Parameter {
         setName(param.getName());
         setType(param.getType());
         setOptionalFragment(param.getOptionalFragment());
+    }
+
+    public Set<Query> getQueries() {
+        return queries;
     }
 }

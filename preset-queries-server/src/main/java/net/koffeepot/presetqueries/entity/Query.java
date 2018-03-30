@@ -99,7 +99,7 @@ public class Query {
     }
 
 
-    public void updateParameters(Set<Parameter> parameters) {
+    public Set<Parameter> updateParameters(Set<Parameter> parameters) {
         //TODO: Parameters are not shared between queries
         Iterator<Parameter> postedParams = parameters.iterator();
         Set<Parameter> elementToRemove = new HashSet<>();
@@ -119,5 +119,15 @@ public class Query {
         while (postedParams.hasNext()) {
             getParameters().add(postedParams.next());
         }
+
+        return elementToRemove;
+    }
+
+    public Set<Parameter> update(Query postedQuery, Configuration configuration) {
+        setDescription(postedQuery.getDescription());
+        setConfiguration(configuration);
+        setName(postedQuery.getName());
+        setTemplate(postedQuery.getTemplate());
+        return updateParameters(postedQuery.getParameters());
     }
 }

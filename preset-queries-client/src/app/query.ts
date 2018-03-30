@@ -5,11 +5,16 @@ export class ParameterType {
   label: string;
 }
 
-class Parameter {
+export class Parameter {
   name: string;
   type: ParameterType;
   optionalFragment: string;
   userValue: string;
+
+  constructor() {
+    this.type=new ParameterType();
+    this.type.name = 'WHERE';
+  }
 }
 
 //Light objects are copy of objects but enum class replaced by string

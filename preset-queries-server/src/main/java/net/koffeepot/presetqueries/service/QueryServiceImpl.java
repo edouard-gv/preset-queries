@@ -6,6 +6,7 @@ import net.koffeepot.presetqueries.entity.Parameter;
 import net.koffeepot.presetqueries.entity.Query;
 import net.koffeepot.presetqueries.datasource.DataSourceFactory;
 import net.koffeepot.presetqueries.repository.ConfigurationRepository;
+import net.koffeepot.presetqueries.repository.ParameterRepository;
 import net.koffeepot.presetqueries.repository.QueryRepository;
 import net.koffeepot.presetqueries.view.QueryResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,10 @@ public class QueryServiceImpl implements QueryService {
     @Autowired
     private
     QueryRepository queryRepository;
+
+    @Autowired
+    private
+    ParameterRepository parameterRepository;
 
     @Autowired
     private
@@ -68,11 +73,9 @@ public class QueryServiceImpl implements QueryService {
     @Override
     public Query updateQuery(Query postedQuery) {
         Query storedQuery = checkAndGetQueryForUpdate(postedQuery);
-
         updateQueryData(postedQuery, storedQuery);
-
+        this.parameterRepository.save(storedQuery.getParameters());
         this.queryRepository.save(storedQuery);
-
         return storedQuery;
     }
 
@@ -196,11 +199,14 @@ public class QueryServiceImpl implements QueryService {
     }
 
     void updateQueryData(Query postedQuery, Query storedQuery) {
-        storedQuery.setDescription(postedQuery.getDescription());
-        storedQuery.setConfiguration(configurationRepository.findOne(postedQuery.getConfigurationId()));
-        storedQuery.setName(postedQuery.getName());
-        storedQuery.setTemplate(postedQuery.getTemplate());
-        storedQuery.updateParameters(postedQuery.getParameters());
+        Configuration configuration = configurationRepository.findOne(postedQuery.getConfigurationId());
+        Set<Parameter> parametersToRemove = storedQuery.update(postedQuery, configuration);
+        for (Parameter parameter: parametersToRemove) {
+            if (parameter.getQueries().size()==1) {
+                //the parameter still has the query in its queries, but only the query. We can thus garbage it.
+                parameterRepository.delete(parametersToRemove);
+            }
+        }
     }
 
 }
