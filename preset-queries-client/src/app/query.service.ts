@@ -6,7 +6,7 @@ import { of } from 'rxjs/observable/of';
 
 
 import { MessageService} from './message.service';
-import {Configuration, LightQuery, ParameterType, Query, QueryResponse} from './query';
+import {Configuration, ParameterType, Query, QueryResponse} from './query';
 import {RoleService} from "./role.service";
 
 
@@ -51,7 +51,7 @@ export class QueryService {
 
   executeQuery (query: Query): void {
     this.messageService.setMainMessage(null);
-    this.http.post<QueryResponse>('api/execute', new LightQuery(query), this.buildHttpPostOptions()).pipe(
+    this.http.post<QueryResponse>('api/execute', query, this.buildHttpPostOptions()).pipe(
       tap((queryResponse: QueryResponse) => this.log(`query ${query.name} posted, returned jdbcTemplate ${queryResponse.jdbcTemplate}`)),
       catchError(this.handleError<QueryResponse>('executeQuery'))
     ).subscribe((queryResponse: QueryResponse) => {
@@ -63,7 +63,7 @@ export class QueryService {
   }
 
   updateQuery (query: Query): void {
-    this.http.post<Query>('api/query', new LightQuery(query), this.buildHttpPostOptions()).pipe(
+    this.http.post<Query>('api/query', query, this.buildHttpPostOptions()).pipe(
       tap((queryResponse: Query) => this.log(`query ${query.name} updated`)),
       catchError(this.handleError<Query>('executeQuery', query))
     ).subscribe((result: Query) => {
@@ -114,5 +114,4 @@ export class QueryService {
       this.messageService.setMainMessage(message);
     }
   }
-
 }

@@ -1,41 +1,52 @@
 package net.koffeepot.presetqueries.service;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@JsonFormat(shape = JsonFormat.Shape.OBJECT)
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public enum ParameterType {
-    FROM("From clause"),
-    WHERE("Where clause"),
-    WHERE_OPTIONAL("Where clause with optional fragment", "Optional fragment", "will be added when parameter is not null");
+    FROM(false),
+    WHERE(false),
+    WHERE_OPTIONAL(true);
 
-    private String label;
-    private String parametersLabel;
-    private String hint;
+    private boolean isParameterized;
 
-    ParameterType(String label, String parametersLabel, String hint) {
-        this(label);
-        this.parametersLabel = parametersLabel;
-        this.hint = hint;
+    ParameterType(boolean isParameterized) {
+        this.isParameterized = isParameterized;
     }
 
-    ParameterType(String label) {
-        this.label = label;
+    public boolean isParameterized() {
+        return isParameterized;
     }
 
-    //getters for json representation used by jackson Object shape formatting
-    public String getLabel() {
-        return label;
-    }
+    public static class ParameterTypePOJO {
 
-    public String getParametersLabel() {
-        return parametersLabel;
-    }
+        public String getName() {
+            return name;
+        }
 
-    public String getHint() {
-        return hint;
-    }
+        public boolean getIsParameterized() {
+            return isParameterized;
+        }
 
-    public String getName() {
-        return this.name();
+        private String name;
+        private boolean isParameterized;
+
+        private ParameterTypePOJO(ParameterType type) {
+            this.name = type.name();
+            this.isParameterized = type.isParameterized();
+        }
+
+        @JsonIgnore
+        public static List<ParameterTypePOJO> buildList() {
+            return Arrays.stream(ParameterType.values()).map(parameterType -> new ParameterTypePOJO(parameterType)).collect(Collectors.toList());
+        }
+
+        //For Jackson serialization
+        public ParameterTypePOJO() {
+            super();
+        }
     }
 }

@@ -30,9 +30,7 @@ public class MetaDataController {
 
     @RequestMapping(path = "/api/parameter-types", method= RequestMethod.GET)
     public @ResponseBody
-    List<ParameterType> getParameterTypes() {
-        return Arrays.asList(ParameterType.values());
+    List<ParameterType.ParameterTypePOJO> getParameterTypes() {
+        return ParameterType.ParameterTypePOJO.buildList();
     }
-
-
 }
