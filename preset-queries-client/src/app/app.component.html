@@ -1,11 +1,7 @@
 <app-header [title]="title"></app-header>
 <div class="container" role="main">
-<!--  <div class="row">
-    <app-header [title]="title"></app-header>
-  </div> -->
-  <div class="row" *ngIf="roleService.token">
-    <div class="col-xs-12 col-md-3"><app-queries></app-queries></div>
-    <div class="col-xs-12 col-md-9"><app-data-table></app-data-table></div>
+  <div *ngIf="roleService.token">
+    <app-queries></app-queries>
   </div>
   <div class="jumbotron" *ngIf="!roleService.token">
     <p>Please log-in using your "AD" / "Windows" credentials, in the upper right corner</p>

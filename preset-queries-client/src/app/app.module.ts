@@ -16,6 +16,7 @@ import { DataTableComponent } from './data-table/data-table.component';
 import { HeaderComponent } from './header/header.component';
 import { LoginComponent } from './login/login.component';
 import { RoleService } from "./role.service";
+import { QueryUpdateComponent } from './query-update/query-update.component';
 
 
 @NgModule({
@@ -26,7 +27,8 @@ import { RoleService } from "./role.service";
     MessagesComponent,
     DataTableComponent,
     HeaderComponent,
-    LoginComponent
+    LoginComponent,
+    QueryUpdateComponent
   ],
   imports: [
     BrowserModule,

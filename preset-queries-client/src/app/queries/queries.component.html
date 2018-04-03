@@ -1,13 +1,21 @@
-<strong>Pick a query</strong>
-<ul>
-  <li *ngFor="let query of queries"
-      [class.selected]="query === selectedQuery"
-      (click)="onSelect(query)">
+<div class="row">
+<div class="col-xs-12 col-md-3">
+  <strong>Pick a query</strong>
+  <ul>
+    <li *ngFor="let query of queries"
+        [class.selected]="query === selectedQuery"
+        (click)="onSelect(query)">
 
-    <span class="name">{{query.name}}</span><span *ngIf="query.isEdited">*</span>
-  </li>
-</ul>
-<button (click)="newQuery()" class="btn btn-light btn-sm">New query</button>
-<app-query-detail [query]="selectedQuery"></app-query-detail>
-<hr>
-<button (click)="reloadAll()" class="btn btn-light btn-sm">Abort all editions and reload from db</button>
+      <span class="name">{{query.name}}</span><span *ngIf="query.isEdited">*</span>
+    </li>
+  </ul>
+  <button (click)="newQuery()" class="btn btn-light btn-sm">New query</button>
+  <app-query-detail [query]="selectedQuery"></app-query-detail>
+  <hr>
+  <button (click)="reloadAll()" class="btn btn-light btn-sm">Abort all editions and reload from db</button>
+</div>
+<div class="col-xs-12 col-md-9" >
+  <app-query-update [query]="selectedQuery" *ngIf="selectedQuery && selectedQuery.isEdited"></app-query-update>
+  <app-data-table *ngIf="!selectedQuery || !selectedQuery.isEdited"></app-data-table>
+</div>
+</div>
