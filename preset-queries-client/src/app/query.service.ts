@@ -65,7 +65,7 @@ export class QueryService {
   updateQuery (query: Query): void {
     this.http.post<Query>('api/query', query, this.buildHttpPostOptions()).pipe(
       tap((queryResponse: Query) => this.log(`query ${query.name} updated`)),
-      catchError(this.handleError<Query>('executeQuery', query))
+      catchError(this.handleError<Query>('updateQuery', query))
     ).subscribe((result: Query) => {
       (new Query()).merge(result, query);
     });
