@@ -3,7 +3,7 @@
   <div *ngIf="roleService.token">
     <app-queries></app-queries>
   </div>
-  <div class="jumbotron" *ngIf="!roleService.token">
+  <div *ngIf="!roleService.token" class="jumbotron">
     <p>Please log-in using your "AD" / "Windows" credentials, in the upper right corner</p>
     <p *ngIf="messageService.mainMessage">{{messageService.mainMessage}}</p>
   </div>

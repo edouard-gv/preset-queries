@@ -14,6 +14,9 @@ import {RoleService} from "./role.service";
 @Injectable()
 export class QueryService {
 
+  mainHeader : string[];
+  mainData : string[][];
+
   private buildHttpPostOptions() {
     return {headers: {'Content-Type': 'application/json', "KoffePot-Token": this.roleService.token}};
   }
@@ -21,9 +24,6 @@ export class QueryService {
   private buildHttpGetOptions() {
     return {headers: {"KoffePot-Token": this.roleService.token}};
   }
-
-  headerSource: string[] = ['--'];
-  dataSource: string[][] = [];
 
   getQueries(): Observable<Query[]> {
     return this.http.get<Query[]>('api/queries', this.buildHttpGetOptions())
@@ -49,15 +49,19 @@ export class QueryService {
       );
   }
 
-  executeQuery (query: Query): void {
+  executeQuery (query: Query): Observable<QueryResponse> {
     this.messageService.setMainMessage(null);
-    this.http.post<QueryResponse>('api/execute', query, this.buildHttpPostOptions()).pipe(
+    return this.http.post<QueryResponse>('api/execute', query, this.buildHttpPostOptions()).pipe(
       tap((queryResponse: QueryResponse) => this.log(`query ${query.name} posted, returned jdbcTemplate ${queryResponse.jdbcTemplate}`)),
       catchError(this.handleError<QueryResponse>('executeQuery'))
-    ).subscribe((queryResponse: QueryResponse) => {
+    );
+  }
+
+  executeMainQuery(query: Query): void {
+    this.executeQuery(query).subscribe((queryResponse: QueryResponse) => {
       if (queryResponse) {
-        this.dataSource = queryResponse.data;
-        this.headerSource = queryResponse.header;
+        this.mainData = queryResponse.data;
+        this.mainHeader = queryResponse.header;
       }
     });
   }
@@ -72,10 +76,6 @@ export class QueryService {
 
   }
 
-  editQuery (query: Query): void {
-    query.isEdited = true;
-  }
-
   reloadQuery (query: Query): void {
     this.http.get<Query>('api/query/'+query.id, this.buildHttpGetOptions())
       .pipe(
@@ -86,7 +86,10 @@ export class QueryService {
       });
   }
 
-  constructor(private http: HttpClient, private messageService: MessageService, private roleService: RoleService) { }
+  constructor(private http: HttpClient, private messageService: MessageService, private roleService: RoleService) {
+    this.mainHeader = ['--'];
+    this.mainData = []
+  }
 
   /**
    * Handle Http operation that failed.

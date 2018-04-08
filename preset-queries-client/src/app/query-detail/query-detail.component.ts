@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import {Parameter, Query} from '../query';
+import {Parameter, Query, QueryResponse} from '../query';
 import { QueryService} from '../query.service';
 
 @Component({
@@ -28,10 +28,10 @@ export class QueryDetailComponent implements OnInit {
   }
 
   execute(): void {
-    this.queryService.executeQuery(this.query);
+    this.queryService.executeMainQuery(this.query);
   }
 
   edit(): void {
-    this.queryService.editQuery(this.query);
+    this.query.isEdited = true;
   }
 }
