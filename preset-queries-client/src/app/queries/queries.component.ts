@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Query } from '../query';
+import {Parameter, Query} from '../query';
 import { QueryService} from '../query.service';
 
 @Component({
@@ -19,6 +19,15 @@ export class QueriesComponent implements OnInit {
 
   onSelect(query: Query): void {
     this.selectedQuery = query;
+    for (let parameter of this.selectedQuery.parameters) {
+      if (Parameter.isListParameter(parameter)) {
+        for (let option of Parameter.getUserValueRawOptionList(parameter)) {
+          if (Parameter.isDefaultOption(option)) {
+            parameter.userValue = Parameter.cleanOption(option);
+          }
+        }
+      }
+    }
   }
 
   newQuery(): void {

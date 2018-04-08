@@ -19,6 +19,14 @@ export class QueryDetailComponent implements OnInit {
 
   }
 
+  isListParameter(parameter: Parameter): boolean {
+    return Parameter.isListParameter(parameter);
+  }
+
+  getCleanUserValueOptionList(parameter: Parameter): string[] {
+    return Parameter.getUserValueRawOptionList(parameter).map(Parameter.cleanOption);
+  }
+
   execute(): void {
     this.queryService.executeQuery(this.query);
   }

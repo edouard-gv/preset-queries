@@ -129,9 +129,11 @@ public class QueryServiceImpl implements QueryService {
             if (param.getType() != null){
                 switch (param.getType()) {
                     case FROM:
+                    case FROM_LIST:
                         jdbcTemplateString = jdbcTemplateString.replaceAll(":"+ param.getName(), param.getUserValue());
                         break;
                     case WHERE:
+                    case WHERE_LIST:
                         mergedParams.addValue(param.getName(), param.getUserValue());
                         break;
                     case WHERE_OPTIONAL:

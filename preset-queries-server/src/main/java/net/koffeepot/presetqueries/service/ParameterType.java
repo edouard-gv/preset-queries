@@ -8,7 +8,9 @@ import java.util.stream.Collectors;
 
 public enum ParameterType {
     FROM(false),
+    FROM_LIST(true),
     WHERE(false),
+    WHERE_LIST(true),
     WHERE_OPTIONAL(true);
 
     private boolean isParameterized;
