@@ -4,3 +4,10 @@
 ul {
   list-style-type: square;
 }
+.data {
+  font-family: "Menlo", "DejaVu Sans Mono", "Liberation Mono", "Consolas", "Ubuntu Mono", "Courier New", "andale mono", "lucida console", monospace;
+  white-space: normal;
+  word-wrap: normal;
+  font-size: 12px;
+  margin-top: 6px;
+}

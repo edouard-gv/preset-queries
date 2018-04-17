@@ -6,23 +6,22 @@ import { of } from 'rxjs/observable/of';
 
 
 import { MessageService} from './message.service';
-import {Configuration, ParameterType, Query, QueryResponse} from './query';
-import {RoleService} from "./role.service";
+import {Configuration, ParameterType, Query, QueryResponse, StructuredQueryResponse} from './query';
+import {RoleService} from './role.service';
 
 
 
 @Injectable()
 export class QueryService {
 
-  mainHeader : string[];
-  mainData : string[][];
+  mainQueryResponse: StructuredQueryResponse;
 
   private buildHttpPostOptions() {
-    return {headers: {'Content-Type': 'application/json', "KoffePot-Token": this.roleService.token}};
+    return {headers: {'Content-Type': 'application/json', 'KoffePot-Token': this.roleService.token}};
   }
 
   private buildHttpGetOptions() {
-    return {headers: {"KoffePot-Token": this.roleService.token}};
+    return {headers: {'KoffePot-Token': this.roleService.token}};
   }
 
   getQueries(): Observable<Query[]> {
@@ -58,10 +57,9 @@ export class QueryService {
   }
 
   executeMainQuery(query: Query): void {
-    this.executeQuery(query).subscribe((queryResponse: QueryResponse) => {
-      if (queryResponse) {
-        this.mainData = queryResponse.data;
-        this.mainHeader = queryResponse.header;
+    this.executeQuery(query).subscribe((serviceQueryResponse: QueryResponse) => {
+      if (serviceQueryResponse) {
+        this.mainQueryResponse.updateFromServiceQueryResponse(serviceQueryResponse);
       }
     });
   }
@@ -77,9 +75,9 @@ export class QueryService {
   }
 
   reloadQuery (query: Query): void {
-    this.http.get<Query>('api/query/'+query.id, this.buildHttpGetOptions())
+    this.http.get<Query>('api/query/' + query.id, this.buildHttpGetOptions())
       .pipe(
-        tap(query => this.log(`query ${query.name} reloaded`)),
+        tap(q => this.log(`query ${q.name} reloaded`)),
         catchError(this.handleError('reloadQuery', query))
       ).subscribe(result => {
       (new Query()).merge(result, query);
@@ -87,8 +85,7 @@ export class QueryService {
   }
 
   constructor(private http: HttpClient, private messageService: MessageService, private roleService: RoleService) {
-    this.mainHeader = ['--'];
-    this.mainData = []
+    this.mainQueryResponse = new StructuredQueryResponse();
   }
 
   /**

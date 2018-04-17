@@ -16,6 +16,9 @@
 </div>
 <div class="col-xs-12 col-md-9" >
   <app-query-update [query]="selectedQuery" *ngIf="selectedQuery && selectedQuery.isEdited"></app-query-update>
-  <app-data-table *ngIf="!selectedQuery || !selectedQuery.isEdited"></app-data-table>
+  <div class="data" *ngIf="!selectedQuery || !selectedQuery.isEdited">
+    <app-data-table [queryResponse]="queryService.mainQueryResponse"></app-data-table>
+  &nbsp; <!-- to allow selecting table easily with the mouse -->
+  </div>
 </div>
 </div>

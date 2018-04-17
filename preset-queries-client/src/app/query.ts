@@ -70,3 +70,27 @@ export class Configuration {
   id: number;
   name: string;
 }
+
+export class StructuredQueryResponse {
+  query: Query;
+  header: string[];
+  dataLines: DataLine[];
+
+  updateFromServiceQueryResponse(queryResponse: QueryResponse): void {
+    this.query = queryResponse.query;
+    this.header = queryResponse.header;
+    this.dataLines = queryResponse.data.map(line => new DataLine(line));
+  }
+}
+
+export class DataLine {
+  cellArray: string[];
+  queryResponse: StructuredQueryResponse;
+  isDrilled: boolean;
+
+  constructor(cellArray: string[]) {
+    this.cellArray = cellArray;
+    this.queryResponse = new StructuredQueryResponse();
+    this.isDrilled = false;
+  }
+}

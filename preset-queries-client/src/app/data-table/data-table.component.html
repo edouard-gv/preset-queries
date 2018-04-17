@@ -1,13 +1,14 @@
-<div class="main">
-  <table class="data table-bordered">
-    <tr class="border border-left-0 border-top-0 border-right-0" >
-      <td *ngFor='let headerItem of queryService.mainHeader'>{{headerItem}}</td>
+<table *ngIf="queryResponse.query" class="  table-bordered">
+  <tr class="data border border-left-0 border-top-0 border-right-0" >
+    <td *ngFor='let headerItem of queryResponse.header'>{{headerItem}}</td>
+  </tr>
+  <tr *ngIf="!queryResponse.dataLines.length"><span class="text-muted">query returned no lines</span></tr>
+  <ng-container *ngFor='let line of queryResponse.dataLines'>
+    <tr class="data">
+      <td *ngFor='let data of line.cellArray'>{{data}} <button class="badge badge-default" (click)="drill(line, index, data)">D</button></td>
     </tr>
-    <tr *ngIf="!queryService.mainData.length"><span class="text-muted">no data</span></tr>
-    <tr *ngFor='let line of queryService.mainData'>
-      <td *ngFor='let cell of line'>{{cell}}</td>
-    </tr>
-  </table>
-  &nbsp;
-</div>
-
+    <tr *ngIf="line.isDrilled"><td [attr.colspan]="queryResponse.header.length">
+      <app-data-table [queryResponse]="line.queryResponse"></app-data-table>
+    </td></tr>
+  </ng-container>
+</table>
