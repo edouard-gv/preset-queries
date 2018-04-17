@@ -19,9 +19,9 @@ export class QueriesComponent implements OnInit {
 
   onSelect(query: Query): void {
     this.selectedQuery = query;
-    for (let parameter of this.selectedQuery.parameters) {
+    for (const parameter of this.selectedQuery.parameters) {
       if (Parameter.isListParameter(parameter)) {
-        for (let option of Parameter.getUserValueRawOptionList(parameter)) {
+        for (const option of Parameter.getUserValueRawOptionList(parameter)) {
           if (Parameter.isDefaultOption(option)) {
             parameter.userValue = Parameter.cleanOption(option);
           }
@@ -31,8 +31,8 @@ export class QueriesComponent implements OnInit {
   }
 
   newQuery(): void {
-    let aQuery: Query = new Query();
-    aQuery.name = "new name";
+    const aQuery: Query = new Query();
+    aQuery.name = 'new name';
     aQuery.isEdited = true;
     this.queries.push(aQuery);
     this.selectedQuery = aQuery;

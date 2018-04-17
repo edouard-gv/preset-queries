@@ -15,7 +15,7 @@ import { MessageService } from './message.service';
 import { DataTableComponent } from './data-table/data-table.component';
 import { HeaderComponent } from './header/header.component';
 import { LoginComponent } from './login/login.component';
-import { RoleService } from "./role.service";
+import { RoleService } from './role.service';
 import { QueryUpdateComponent } from './query-update/query-update.component';
 
 
