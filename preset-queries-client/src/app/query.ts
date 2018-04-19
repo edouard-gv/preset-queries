@@ -73,13 +73,28 @@ export class Configuration {
 
 export class StructuredQueryResponse {
   query: Query;
-  header: string[];
+  header: HeaderItem[];
   dataLines: DataLine[];
 
   updateFromServiceQueryResponse(queryResponse: QueryResponse): void {
     this.query = queryResponse.query;
-    this.header = queryResponse.header;
+    const drillParameters = new Map();
+
+    this.query.parameters.filter((value: Parameter) => (value.type === 'DRILL_PARAMETER'))
+      .forEach((value: Parameter) => drillParameters.set(
+        value.optionalFragment.split(':')[0].trim(),
+        value.optionalFragment.split(':')[1].trim()));
+    this.header = queryResponse.header.map(name => new HeaderItem(name));
     this.dataLines = queryResponse.data.map(line => new DataLine(line));
+  }
+}
+
+export class HeaderItem {
+  name: string;
+  drillQueryName: string;
+
+  constructor(name: string) {
+    this.name = name;
   }
 }
 
