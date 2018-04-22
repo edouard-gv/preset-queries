@@ -19,6 +19,14 @@ export class QueryDetailComponent implements OnInit {
 
   }
 
+  public getExecutionParameters(): Parameter[] {
+    return this.query.parameters.filter(p => p.type !== 'DRILLING_QUERY');
+  }
+
+  public hasExecutionParameters(): boolean {
+    return this.query.parameters.filter(p => p.type !== 'DRILLING_QUERY').length > 0;
+  }
+
   isListParameter(parameter: Parameter): boolean {
     return Parameter.isListParameter(parameter);
   }

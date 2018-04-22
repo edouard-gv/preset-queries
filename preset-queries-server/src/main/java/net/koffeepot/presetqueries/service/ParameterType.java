@@ -11,7 +11,8 @@ public enum ParameterType {
     FROM_LIST(true),
     WHERE(false),
     WHERE_LIST(true),
-    WHERE_OPTIONAL(true);
+    WHERE_OPTIONAL(true),
+    DRILLING_QUERY(true);
 
     private boolean isParameterized;
 

@@ -48,7 +48,7 @@ export class Query {
     this.parameters = [];
   }
 
-  public merge(result: Query, query: Query): void {
+  public static merge(result: Query, query: Query): void {
     query.name = result.name;
     query.description = result.description;
     query.parameters = result.parameters;
@@ -73,28 +73,13 @@ export class Configuration {
 
 export class StructuredQueryResponse {
   query: Query;
-  header: HeaderItem[];
+  header: string[];
   dataLines: DataLine[];
 
   updateFromServiceQueryResponse(queryResponse: QueryResponse): void {
     this.query = queryResponse.query;
-    const drillParameters = new Map();
-
-    this.query.parameters.filter((value: Parameter) => (value.type === 'DRILL_PARAMETER'))
-      .forEach((value: Parameter) => drillParameters.set(
-        value.optionalFragment.split(':')[0].trim(),
-        value.optionalFragment.split(':')[1].trim()));
-    this.header = queryResponse.header.map(name => new HeaderItem(name));
+    this.header = queryResponse.header;
     this.dataLines = queryResponse.data.map(line => new DataLine(line));
-  }
-}
-
-export class HeaderItem {
-  name: string;
-  drillQueryName: string;
-
-  constructor(name: string) {
-    this.name = name;
   }
 }
 

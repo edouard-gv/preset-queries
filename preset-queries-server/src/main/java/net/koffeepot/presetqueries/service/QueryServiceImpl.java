@@ -127,23 +127,28 @@ public class QueryServiceImpl implements QueryService {
         String jdbcTemplateString = template;
         for (Parameter param : storedParams) {
             if (param.getType() != null){
+                // Set null to "" in order 'replace all' not to fail if no user value set
+                String userValue = param.getUserValue()==null?"":param.getUserValue();
                 switch (param.getType()) {
                     case FROM:
                     case FROM_LIST:
-                        jdbcTemplateString = jdbcTemplateString.replaceAll(":"+ param.getName(), param.getUserValue());
+                        jdbcTemplateString = jdbcTemplateString.replaceAll(":"+ param.getName(), userValue);
                         break;
                     case WHERE:
                     case WHERE_LIST:
-                        mergedParams.addValue(param.getName(), param.getUserValue());
+                        mergedParams.addValue(param.getName(), userValue);
                         break;
                     case WHERE_OPTIONAL:
-                        if (null != param.getUserValue() && !param.getUserValue().trim().isEmpty()) {
+                        if (null != userValue && !userValue.trim().isEmpty()) {
                             jdbcTemplateString = jdbcTemplateString.replaceAll(":"+ param.getName(), param.getOptionalFragment());
-                            mergedParams.addValue(param.getName(), param.getUserValue());
+                            mergedParams.addValue(param.getName(), userValue);
                         }
                         else {
                             jdbcTemplateString = jdbcTemplateString.replaceAll(":"+ param.getName(), "");
                         }
+                        break;
+                    case DRILLING_QUERY:
+                        break;
                 }
             }
         }

@@ -69,7 +69,7 @@ export class QueryService {
       tap((queryResponse: Query) => this.log(`query ${query.name} updated`)),
       catchError(this.handleError<Query>('updateQuery', query))
     ).subscribe((result: Query) => {
-      (new Query()).merge(result, query);
+      Query.merge(result, query);
     });
 
   }
@@ -80,7 +80,7 @@ export class QueryService {
         tap(q => this.log(`query ${q.name} reloaded`)),
         catchError(this.handleError('reloadQuery', query))
       ).subscribe(result => {
-      (new Query()).merge(result, query);
+      Query.merge(result, query);
       });
   }
 

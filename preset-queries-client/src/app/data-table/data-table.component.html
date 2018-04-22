@@ -1,11 +1,11 @@
 <table *ngIf="queryResponse.query" class="  table-bordered">
   <tr class="data border border-left-0 border-top-0 border-right-0" >
-    <td *ngFor='let headerItem of queryResponse.header'>{{headerItem.name}}</td>
+    <td *ngFor='let headerItem of queryResponse.header'>{{headerItem}}</td>
   </tr>
-  <tr *ngIf="!queryResponse.dataLines.length"><span class="text-muted">query returned no lines</span></tr>
+  <tr *ngIf="!queryResponse.dataLines.length"><td [attr.colspan]="queryResponse.header.length" class="text-muted">query returned no lines</td></tr>
   <ng-container *ngFor='let line of queryResponse.dataLines'>
     <tr class="data">
-      <td *ngFor='let data of line.cellArray; let i=index'>{{data}} <button class="badge badge-default" (click)="drill(line, i)">D</button></td>
+      <td *ngFor='let data of line.cellArray; let pos=index'>{{data}}<button *ngIf="isDrilling(pos)" class="badge badge-default" (click)="drill(line, pos)">D</button></td>
     </tr>
     <tr *ngIf="line.isDrilled"><td [attr.colspan]="queryResponse.header.length">
       <app-data-table [queryResponse]="line.queryResponse"></app-data-table>
