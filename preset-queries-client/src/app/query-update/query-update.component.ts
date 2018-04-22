@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import {Configuration, Parameter, ParameterType, Query} from "../query";
-import {QueryService} from "../query.service";
+import {Configuration, Parameter, ParameterType, Query} from '../query';
+import {QueryService} from '../query.service';
+import {isUndefined} from 'util';
 
 @Component({
   selector: 'app-query-update',
@@ -11,48 +12,50 @@ export class QueryUpdateComponent implements OnInit {
   @Input() query: Query;
 
   configurations: Configuration[];
-  parameterTypes : ParameterType[];
+  parameterTypes: ParameterType[];
 
   getMetaData(): void {
-    this.queryService.getConfigurations().subscribe(result => this.configurations = result);
-    this.queryService.getParameterTypes().subscribe(result =>
-    {
-      //Decorating with editorial data. Better here than in the back...
-      for (var parameter of result) {
+    this.queryService.getConfigurations().subscribe(configurations => {
+      this.configurations = configurations;
+    });
+    this.queryService.getParameterTypes().subscribe(parameterTypes => {
+      // Decorating with editorial data. Better here than in the back...
+      for (const parameter of parameterTypes) {
         switch (parameter.name) {
-          case "FROM":
-            parameter.label = "From clause";
+          case 'FROM':
+            parameter.label = 'From clause';
             break;
-          case "WHERE":
-            parameter.label = "Where clause";
+          case 'WHERE':
+            parameter.label = 'Where clause';
             break;
-          case "WHERE_OPTIONAL":
-            parameter.label = "Where clause with optional fragment";
-            parameter.parametersLabel = "Optional fragment";
-            parameter.hint = "will be added when parameter is not null";
+          case 'WHERE_OPTIONAL':
+            parameter.label = 'Where clause with optional fragment';
+            parameter.parametersLabel = 'Optional fragment';
+            parameter.hint = 'will be added when parameter is not null';
             break;
           default:
             parameter.label = parameter.name;
-            parameter.parametersLabel = "Parameter parameters";
-            parameter.hint = "to be documented";
+            parameter.parametersLabel = 'Parameter parameters';
+            parameter.hint = 'to be documented';
         }
       }
-      this.parameterTypes = result;
+      this.parameterTypes = parameterTypes;
     });
   }
 
   getParameterTypeFromParameterTypeName(parameterTypeName: String): ParameterType {
-    for (var parameter of this.parameterTypes){
-      if (parameter.name == parameterTypeName)
-        return parameter;
+    if (isUndefined(this.parameterTypes)) {
+      console.log('Please wait for parameterTypes to be defined before calling the function getParameterTypeFromParameterTypeName ' +
+        'by conditioning your block with *ngIf="parameterTypes"');
     }
+    return this.parameterTypes.find(p => p.name === parameterTypeName);
   }
   constructor(
     private queryService: QueryService
   ) { }
 
   ngOnInit() {
-    this.getMetaData()
+    this.getMetaData();
   }
 
   addParameter(): void {

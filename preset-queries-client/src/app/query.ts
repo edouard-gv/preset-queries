@@ -1,3 +1,5 @@
+import {isUndefined} from 'util';
+
 export class ParameterType {
   name: string;
   isParameterized: boolean;
@@ -17,21 +19,24 @@ export class Parameter {
   }
 
   public static isListParameter(parameter: Parameter): boolean {
-    return (parameter.type.endsWith("LIST"));
+    return (parameter.type.endsWith('LIST'));
   }
 
   public static getUserValueRawOptionList(parameter: Parameter): string[] {
-    return parameter.optionalFragment.split(";")
+    if (isUndefined(parameter.optionalFragment)) {
+      return [];
+    }
+    return parameter.optionalFragment.split(';');
   }
 
   public static isDefaultOption(option: string): boolean {
-    return option.endsWith("*");
+    return option.endsWith('*');
   }
 
   public static cleanOption(option: string): string {
     return (Parameter.isDefaultOption(option)
       ? option.slice(0, option.length - 1)
-      : option)
+      : option);
   }
 }
 

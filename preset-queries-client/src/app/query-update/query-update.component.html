@@ -1,16 +1,16 @@
 <form #queryForm="ngForm">
 
   <div class="form-group">
-    <label >Name</label>
+    <label >Query name</label>
     <input [(ngModel)]="query.name" class="form-control form-control-sm" placeholder="name (must be unique)" name="name">
   </div>
 
   <div class="form-group">
-    <label>Description</label>
+    <label>Business description</label>
     <input [(ngModel)]="query.description" class="form-control form-control-sm" placeholder="A business description" name="description">
   </div>
 
-  <div class="form-group">
+  <div *ngIf="configurations" class="form-group">
     <label>Source configuration</label>
     <select class="form-control" required [(ngModel)]="query.configurationId" name="configuration">
       <option *ngFor="let conf of configurations" [value]="conf.id">{{conf.name}}</option>
@@ -25,22 +25,22 @@
   <hr>
   <div>Parameters <button href="#" (click)="addParameter()" class="badge badge-info">add</button></div>
 
-  <ol>
-    <li *ngFor="let parameter of query.parameters"><strong>{{parameter.name}}</strong>
-      <button href="#" (click)="query.parameters.splice(index,1)" class="badge badge-danger">delete</button>
+  <ol *ngIf="parameterTypes">
+    <li *ngFor="let parameter of query.parameters; let paramNum = index;"><strong>{{parameter.name}}</strong>
+      <button href="#" (click)="query.parameters.splice(paramNum,1)" class="badge badge-danger">delete</button>
       <div class="form-group">
-        <label>name</label>
-        <input [(ngModel)]="parameter.name" class="form-control form-control-sm" placeholder="parameter name" name="parameter-name">
+        <label>Parameter name</label>
+        <input [(ngModel)]="parameter.name" class="form-control form-control-sm" placeholder="parameter name" name="parameter-name-{{paramNum}}" />
       </div>
       <div class="form-group">
-        <label>type</label>
-        <select [(ngModel)]="parameter.type" class="form-control form-control-sm" placeholder="parameter type" name="parameter-type">
+        <label>Parameter type</label>
+        <select [(ngModel)]="parameter.type" class="form-control form-control-sm" name="parameter-type-{{paramNum}}">
           <option *ngFor="let paramType of parameterTypes" [ngValue]="paramType.name">{{paramType.label}}</option>
         </select>
       </div>
       <div *ngIf="getParameterTypeFromParameterTypeName(parameter.type).isParameterized" class="form-group">
         <label>{{getParameterTypeFromParameterTypeName(parameter.type).parametersLabel}} ({{getParameterTypeFromParameterTypeName(parameter.type).hint}})</label>
-        <textarea [(ngModel)]="parameter.optionalFragment" class="form-control form-control-sm" placeholder="optional fragment" name="optional-fragment"></textarea>
+        <textarea [(ngModel)]="parameter.optionalFragment" class="form-control form-control-sm" placeholder="optional fragment" name="optional-fragment-{{paramNum}}"></textarea>
       </div>
     </li>
   </ol>
