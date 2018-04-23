@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import {DataLine, Parameter, Query, QueryResponse, StructuredQueryResponse} from '../query';
 import {QueryService} from '../query.service';
-import {isUndefined} from "util";
+import {isUndefined} from 'util';
 
 @Component({
   selector: 'app-data-table',
@@ -20,7 +20,7 @@ export class DataTableComponent implements OnInit {
       (queries: Query[]) => {
         let targetQuery = queries.find(q=>q.name.toUpperCase()===this.getDrillingQueryName(position).toUpperCase());
         let originalQuery = this.queryResponse.query;
-        //First we copy into the target query all parameters from current query which name matches
+        // First we copy into the target query all parameters from current query which name matches
         DataTableComponent.filterExecutionParameters(targetQuery)
           .map(p=> {
             let originalParameter = DataTableComponent.findExecutionParameterByName(originalQuery, p.name);
@@ -29,7 +29,7 @@ export class DataTableComponent implements OnInit {
             }
           });
 
-        //Then we add the current line cell value as a new parameters if the target query has a parameter with the column name
+        // Then we add the current line cell value as a new parameters if the target query has a parameter with the column name
         for (let i=0; i<this.queryResponse.header.length; i++) {
           let targetParameter = DataTableComponent.findExecutionParameterByName(targetQuery, this.queryResponse.header[i]);
           if (!isUndefined(targetParameter)) {
@@ -69,7 +69,7 @@ export class DataTableComponent implements OnInit {
     if (!this.isDrilling(position)) {
       throw 'Should never happen: looking for a drilling query on a non drilling parameter';
     }
-    return DataTableComponent.findDrillingParameterByName(this.queryResponse.query, this.queryResponse.header[position]).optionalFragment;
+    return DataTableComponent.findDrillingParameterByName(this.queryResponse.query, this.queryResponse.header[position]).options;
   }
 
   public isDrilling(i: number): boolean {

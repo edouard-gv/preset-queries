@@ -140,7 +140,7 @@ public class QueryServiceImpl implements QueryService {
                         break;
                     case WHERE_OPTIONAL:
                         if (null != userValue && !userValue.trim().isEmpty()) {
-                            jdbcTemplateString = jdbcTemplateString.replaceAll(":"+ param.getName(), param.getOptionalFragment());
+                            jdbcTemplateString = jdbcTemplateString.replaceAll(":"+ param.getName(), param.getOptions());
                             mergedParams.addValue(param.getName(), userValue);
                         }
                         else {

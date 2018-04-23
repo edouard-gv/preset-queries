@@ -18,7 +18,7 @@ create table parameter
 	id bigint auto_increment
 		primary key,
 	name varchar(127) null,
-	optional_fragment text null,
+	options text null,
 	type varchar(255) null
 )
 engine=InnoDB

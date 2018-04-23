@@ -20,7 +20,7 @@ public class Parameter {
     @JsonInclude()
     @Transient
     private String userValue;
-    private String optionalFragment;
+    private String options;
 
     @JsonIgnore
     @ManyToMany(mappedBy = "parameters")
@@ -29,10 +29,10 @@ public class Parameter {
     protected Parameter() {}
 
     //Constructors are only for tests
-    public Parameter(String name, ParameterType type, String optionalFragment) {
+    public Parameter(String name, ParameterType type, String options) {
         this.type = type;
         this.name = name;
-        this.optionalFragment = optionalFragment;
+        this.options = options;
         this.queries = new HashSet<>();
     }
 
@@ -56,8 +56,8 @@ public class Parameter {
         return type;
     }
 
-    public String getOptionalFragment() {
-        return optionalFragment;
+    public String getOptions() {
+        return options;
     }
 
     public void setUserValue(String userValue) {
@@ -72,14 +72,14 @@ public class Parameter {
         this.type = type;
     }
 
-    public void setOptionalFragment(String optionalFragment) {
-        this.optionalFragment = optionalFragment;
+    public void setOptions(String options) {
+        this.options = options;
     }
 
     public void update(Parameter param) {
         setName(param.getName());
         setType(param.getType());
-        setOptionalFragment(param.getOptionalFragment());
+        setOptions(param.getOptions());
     }
 
     public Set<Query> getQueries() {

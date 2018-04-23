@@ -27,7 +27,7 @@ export class QueryUpdateComponent implements OnInit {
             break;
           case 'FROM_LIST':
             parameter.label = 'From clause (select list)';
-            parameter.parametersLabel = 'Values';
+            parameter.optionsLabel = 'Values';
             parameter.hint = 'separated by ";". Add a star to the preselected value';
             break;
           case 'WHERE':
@@ -35,22 +35,22 @@ export class QueryUpdateComponent implements OnInit {
             break;
           case 'WHERE_LIST':
             parameter.label = 'Where clause (select list)';
-            parameter.parametersLabel = 'Values';
+            parameter.optionsLabel = 'Values';
             parameter.hint = 'separated by ";". Add a star to the preselected value';
             break;
           case 'WHERE_OPTIONAL':
             parameter.label = 'Where clause with optional fragment';
-            parameter.parametersLabel = 'Optional fragment';
+            parameter.optionsLabel = 'Optional fragment';
             parameter.hint = 'will be added when parameter is not null';
             break;
           case 'DRILLING_QUERY':
             parameter.label = 'Subquery Link';
-            parameter.parametersLabel = 'Name of the subquery';
+            parameter.optionsLabel = 'Name of the subquery';
             parameter.hint = 'all current parameters will be passed to it';
             break;
           default:
             parameter.label = parameter.name;
-            parameter.parametersLabel = 'Parameter parameters';
+            parameter.optionsLabel = 'Parameter options';
             parameter.hint = 'to be documented';
         }
       }

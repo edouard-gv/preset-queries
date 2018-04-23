@@ -3,7 +3,7 @@ import {isUndefined} from 'util';
 export class ParameterType {
   name: string;
   isParameterized: boolean;
-  parametersLabel: string;
+  optionsLabel: string;
   hint: string;
   label: string;
 }
@@ -11,7 +11,7 @@ export class ParameterType {
 export class Parameter {
   name: string;
   type: string;
-  optionalFragment: string;
+  options: string;
   userValue: string;
 
   constructor() {
@@ -23,10 +23,10 @@ export class Parameter {
   }
 
   public static getUserValueRawOptionList(parameter: Parameter): string[] {
-    if (isUndefined(parameter.optionalFragment)) {
+    if (isUndefined(parameter.options)) {
       return [];
     }
-    return parameter.optionalFragment.split(';');
+    return parameter.options.split(';');
   }
 
   public static isDefaultOption(option: string): boolean {

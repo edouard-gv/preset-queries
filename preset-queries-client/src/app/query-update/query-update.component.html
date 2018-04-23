@@ -39,8 +39,9 @@
         </select>
       </div>
       <div *ngIf="getParameterTypeFromParameterTypeName(parameter.type).isParameterized" class="form-group">
-        <label>{{getParameterTypeFromParameterTypeName(parameter.type).parametersLabel}} ({{getParameterTypeFromParameterTypeName(parameter.type).hint}})</label>
-        <textarea [(ngModel)]="parameter.optionalFragment" class="form-control form-control-sm" placeholder="{{getParameterTypeFromParameterTypeName(parameter.type).parametersLabel}}" name="optional-fragment-{{paramNum}}"></textarea>
+        <label>{{getParameterTypeFromParameterTypeName(parameter.type).optionsLabel}}
+          ({{getParameterTypeFromParameterTypeName(parameter.type).hint}})</label>
+        <textarea [(ngModel)]="parameter.options" class="form-control form-control-sm" placeholder="{{getParameterTypeFromParameterTypeName(parameter.type).optionsLabel}}" name="optional-fragment-{{paramNum}}"></textarea>
       </div>
     </li>
   </ol>
