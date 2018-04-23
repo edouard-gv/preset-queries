@@ -79,6 +79,20 @@ public class QueryServiceImpl implements QueryService {
         return storedQuery;
     }
 
+    @Override
+    public void deleteQuery(String sId) {
+        long id;
+        try {
+            id = Long.parseLong(sId);
+        }
+        catch (NumberFormatException nfe) {
+            throw new TechnicalRuntimeException("Not a correct id for a query: "+sId);
+        }
+
+        queryRepository.delete(id);
+
+    }
+
     private Query checkAndGetQueryForExec(Query postedQuery) {
         //Checks
         if (postedQuery == null || postedQuery.getId() == null) {

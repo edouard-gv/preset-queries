@@ -23,7 +23,7 @@
   </div>
 
   <hr>
-  <div>Parameters <button href="#" (click)="addParameter()" class="badge badge-info">add</button></div>
+  <div>Parameters</div>
 
   <ol *ngIf="parameterTypes">
     <li *ngFor="let parameter of query.parameters; let paramNum = index;"><strong>{{parameter.name}}</strong>
@@ -46,8 +46,12 @@
     </li>
   </ol>
 
+  <div><button href="#" (click)="addParameter()" class="badge badge-info">Add parameter</button></div>
 </form>
+<hr>
 
-<button (click)="update()" class="btn btn-success btn-sm">update</button>
-<button (click)="reload()" class="btn btn-light btn-sm float-right">cancel</button>
-
+<div>
+  <button *ngIf="query.id" (click)="update()" class="btn btn-success btn-sm">update</button>
+  <button *ngIf="!query.id" (click)="update()" class="btn btn-success btn-sm">create</button>
+  <button *ngIf="query.id" (click)="reload()" class="btn btn-light btn-sm float-right">cancel</button>
+</div>

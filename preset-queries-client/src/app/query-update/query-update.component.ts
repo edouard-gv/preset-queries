@@ -82,7 +82,9 @@ export class QueryUpdateComponent implements OnInit {
   }
 
   reload(): void {
-    this.queryService.reloadQuery(this.query);
+    if (this.query.id) {
+      this.queryService.reloadQuery(this.query);
+    }
   }
 
 }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {Parameter, Query} from '../query';
 import { QueryService} from '../query.service';
+import {isUndefined} from 'util';
 
 @Component({
   selector: 'app-queries',
@@ -36,6 +37,21 @@ export class QueriesComponent implements OnInit {
     aQuery.isEdited = true;
     this.queries.push(aQuery);
     this.selectedQuery = aQuery;
+  }
+
+  deleteQuery(query: Query): void {
+    if (confirm('Are you sure to delete ' + query.name + '?')) {
+      if (!this.selectedQuery.id) {
+        this.queries.pop();
+        this.selectedQuery = null;
+      } else {
+        this.queryService.deleteQuery(query).subscribe(() => this.reloadAll());
+      }
+    }
+  }
+
+  noNewQueryOnGoing(): boolean {
+    return (this.queries.length > 0 && !isUndefined(this.queries[this.queries.length - 1].id));
   }
 
   constructor(public queryService: QueryService) { }

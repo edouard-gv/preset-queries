@@ -56,6 +56,13 @@ export class QueryService {
     );
   }
 
+  deleteQuery (query: Query): Observable<void> {
+    this.messageService.setMainMessage(null);
+    return this.http.delete<void>('api/query/' + query.id, this.buildHttpPostOptions()).pipe(
+      catchError(this.handleError<void>('deleteQuery'))
+    );
+  }
+
   executeMainQuery(query: Query): void {
     this.executeQuery(query).subscribe((serviceQueryResponse: QueryResponse) => {
       if (serviceQueryResponse) {

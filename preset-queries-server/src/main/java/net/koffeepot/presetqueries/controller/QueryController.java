@@ -52,9 +52,16 @@ public class QueryController {
         return new ResponseEntity<>(queryService.updateQuery(query), HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/api/query/{name}", method= RequestMethod.GET)
-    public ResponseEntity<Query> get(@PathVariable("name") String name, @RequestHeader(value = PresetQueriesConfiguration.KOFFE_POT_TOKEN, defaultValue = "none") String token) {
+    @RequestMapping(path = "/api/query/{id}", method= RequestMethod.GET)
+    public ResponseEntity<Query> get(@PathVariable("id") String id, @RequestHeader(value = PresetQueriesConfiguration.KOFFE_POT_TOKEN, defaultValue = "none") String token) {
         roleService.checkTokenAtLeast(token, RoleService.RoleLevel.READ);
-        return new ResponseEntity<>(queryService.getQuery(name), HttpStatus.OK);
+        return new ResponseEntity<>(queryService.getQuery(id), HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/api/query/{id}", method= RequestMethod.DELETE)
+    public ResponseEntity delete(@PathVariable("id") String id, @RequestHeader(value = PresetQueriesConfiguration.KOFFE_POT_TOKEN, defaultValue = "none") String token) {
+        roleService.checkTokenAtLeast(token, RoleService.RoleLevel.WRITE);
+        queryService.deleteQuery(id);
+        return new ResponseEntity(HttpStatus.OK);
     }
 }

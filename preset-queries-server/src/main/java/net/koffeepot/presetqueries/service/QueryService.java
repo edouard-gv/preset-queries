@@ -12,4 +12,6 @@ public interface QueryService {
     Query updateQuery(Query query);
 
     Query getQuery(String sId);
+
+    void deleteQuery(String sId);
 }

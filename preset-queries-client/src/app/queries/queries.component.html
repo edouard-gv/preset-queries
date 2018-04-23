@@ -1,4 +1,4 @@
-<div class="row">
+<div *ngIf="queries" class="row">
 <div class="col-xs-12 col-md-3">
   <strong>Pick a query</strong>
   <ul>
@@ -9,8 +9,9 @@
       <span class="name">{{query.name}}</span><span *ngIf="query.isEdited">*</span>
     </li>
   </ul>
-  <button (click)="newQuery()" class="btn btn-light btn-sm">New query</button>
+  <button *ngIf="noNewQueryOnGoing()" (click)="newQuery()" class="btn btn-light btn-sm">New query</button>
   <app-query-detail [query]="selectedQuery"></app-query-detail>
+  <button *ngIf="selectedQuery && selectedQuery.isEdited" (click)="deleteQuery(selectedQuery)" class="btn btn-danger btn-sm">delete</button>
   <hr>
   <button (click)="reloadAll()" class="btn btn-light btn-sm">Abort all editions and reload from db</button>
 </div>
