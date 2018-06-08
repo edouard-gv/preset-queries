@@ -6,7 +6,7 @@ public interface RoleService {
 
     void checkTokenAtLeast(String token, RoleLevel minLevel);
 
-    String getAuthToken(String user, String password);
+    String getAuthToken(String login, String password);
 
     RoleLevel checkToken(String token);
 }
