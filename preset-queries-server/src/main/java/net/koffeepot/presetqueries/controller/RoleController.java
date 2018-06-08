@@ -52,7 +52,6 @@ public class RoleController {
     @Autowired
     private RoleService roleService;
 
-    //TODO integrate in a integration test?
     @RequestMapping(path = "/api/login", method= RequestMethod.POST)
     public @ResponseBody
     TokenWrapper login(@RequestBody UserLogin body) {
